@@ -1,9 +1,8 @@
 package com.spacitron.reposlistapp
 
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 
 class MainActivity : AppCompatActivity() {
 
@@ -11,14 +10,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-        RepositoryProvider(RetrofitGitHubServiceProvider(), "JakeWharton")
-                .getNextReposMaybe()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    System.currentTimeMillis();
-                }
-
+        val repositoryViewModel = ViewModelProviders.of(this).get(RepositoryViewModel::class.java)
+        repositoryViewModel.initialise(RepositoryProvider(RetrofitGitHubServiceProvider(), "JakeWharton"))
     }
 }
