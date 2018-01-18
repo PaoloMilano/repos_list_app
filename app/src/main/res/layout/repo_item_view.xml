@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="onItemSelectedListener"
+            type="com.spacitron.reposlistapp.ItemSelectedListener" />
+
+        <variable
+            name="repository"
+            type="com.spacitron.reposlistapp.Repository" />
+
+        <variable
+            name="owner"
+            type="com.spacitron.reposlistapp.GitHubUser" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/quarter_standard_margin"
+        android:background="@android:color/white"
+        android:elevation="@dimen/half_standard_margin"
+        android:padding="@dimen/quarter_standard_margin">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?selectableItemBackground"
+            android:clickable="true"
+            android:clipToPadding="false"
+            android:onClick="@{()-> onItemSelectedListener.itemSelected(repository) }"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/info_butt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:paddingLeft="@dimen/half_standard_margin"
+                android:paddingRight="@dimen/half_standard_margin"
+                android:paddingTop="@dimen/half_standard_margin"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_info_outline_black_24dp"
+                android:visibility="@{ repository.description != null ? View.VISIBLE: View.GONE }" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/half_standard_margin"
+                android:paddingLeft="@dimen/half_standard_margin"
+                android:paddingRight="@dimen/half_standard_margin"
+                android:text="@{ repository.name }"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:paddingBottom="@dimen/half_standard_margin"
+                android:paddingLeft="@dimen/half_standard_margin"
+                android:paddingRight="@dimen/half_standard_margin"
+                android:scrollHorizontally="true"
+                android:text="@{ repository.full_name }"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textStyle="italic" />
+
+            <LinearLayout
+                android:id="@+id/description_box"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="@dimen/half_standard_margin"
+                    android:paddingLeft="@dimen/standard_margin"
+                    android:paddingRight="@dimen/standard_margin"
+                    android:text="@{ repository.description }"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/half_standard_margin"
+                    android:paddingBottom="@dimen/half_standard_margin"
+                    android:paddingLeft="@dimen/standard_margin"
+                    android:paddingRight="@dimen/standard_margin"
+                    android:text="@string/owner_text"
+                    android:textStyle="bold"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingBottom="@dimen/half_standard_margin"
+                    android:paddingLeft="@dimen/standard_margin"
+                    android:paddingRight="@dimen/standard_margin">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/avatar"
+                        android:layout_width="@dimen/quadruple_standard_margin"
+                        android:layout_height="@dimen/quadruple_standard_margin"
+                        android:alpha="0"
+                        bind:imgSrc="@{ owner.avatar_url }" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center|left"
+                        android:paddingLeft="@dimen/standard_margin"
+                        android:paddingRight="@dimen/standard_margin"
+                        android:text="@{ owner.login }"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+
+</layout>
