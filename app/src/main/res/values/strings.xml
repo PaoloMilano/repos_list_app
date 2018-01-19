@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ReposListApp</string>
+    <string name="owner_text">Owned by:</string>
 </resources>

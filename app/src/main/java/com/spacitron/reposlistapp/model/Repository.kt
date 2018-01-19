@@ -1,4 +1,4 @@
-package com.spacitron.reposlistapp
+package com.spacitron.reposlistapp.model
 
 open class Repository{
 

@@ -1,5 +1,6 @@
-package com.spacitron.reposlistapp
+package com.spacitron.reposlistapp.reposervice.services
 
+import com.spacitron.reposlistapp.model.Repository
 import io.reactivex.Maybe
 import retrofit2.http.GET
 import retrofit2.http.Path
