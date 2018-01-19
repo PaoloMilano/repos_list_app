@@ -1,8 +1,21 @@
 package com.spacitron.reposlistapp.model
 
-open class GitHubUser{
+import com.google.gson.annotations.SerializedName
+import io.realm.RealmModel
+import io.realm.annotations.PrimaryKey
+import io.realm.annotations.RealmClass
+
+@RealmClass
+open class GitHubUser: RealmModel {
+
+    @PrimaryKey
     var id: Long? = null
+
     var login: String? = null
-    var avatar_url: String? = null
-    var html_url: String? = null
+
+    @SerializedName("avatar_url")
+    var avatarUrl: String? = null
+
+    @SerializedName("html_url")
+    var htmlUrl: String? = null
 }

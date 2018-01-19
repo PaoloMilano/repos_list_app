@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:bind="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
 
@@ -11,8 +10,8 @@
             type="com.spacitron.reposlistapp.utils.ItemSelectedListener" />
 
         <variable
-            name="repository"
-            type="com.spacitron.reposlistapp.model.Repository" />
+            name="repositoryModel"
+            type="com.spacitron.reposlistapp.repoviewmodel.RepositoryModel" />
 
         <variable
             name="owner"
@@ -33,7 +32,7 @@
             android:background="?selectableItemBackground"
             android:clickable="true"
             android:clipToPadding="false"
-            android:onClick="@{()-> onItemSelectedListener.itemSelected(repository) }"
+            android:onClick="@{()-> onItemSelectedListener.itemSelected(repositoryModel) }"
             android:orientation="vertical">
 
             <ImageView
@@ -46,7 +45,7 @@
                 android:paddingTop="@dimen/half_standard_margin"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_info_outline_black_24dp"
-                android:visibility="@{ repository.description != null ? View.VISIBLE: View.GONE }" />
+                android:visibility="@{ repositoryModel.description != null ? View.VISIBLE: View.GONE }" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -54,7 +53,7 @@
                 android:paddingBottom="@dimen/half_standard_margin"
                 android:paddingLeft="@dimen/half_standard_margin"
                 android:paddingRight="@dimen/half_standard_margin"
-                android:text="@{ repository.name }"
+                android:text="@{ repositoryModel.name }"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <TextView
@@ -66,7 +65,7 @@
                 android:paddingLeft="@dimen/half_standard_margin"
                 android:paddingRight="@dimen/half_standard_margin"
                 android:scrollHorizontally="true"
-                android:text="@{ repository.full_name }"
+                android:text="@{ repositoryModel.fullName }"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="italic" />
 
@@ -83,7 +82,7 @@
                     android:paddingBottom="@dimen/half_standard_margin"
                     android:paddingLeft="@dimen/standard_margin"
                     android:paddingRight="@dimen/standard_margin"
-                    android:text="@{ repository.description }"
+                    android:text="@{ repositoryModel.description }"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 <TextView
@@ -110,7 +109,7 @@
                         android:layout_width="@dimen/quadruple_standard_margin"
                         android:layout_height="@dimen/quadruple_standard_margin"
                         android:alpha="0"
-                        bind:imgSrc="@{ owner.avatar_url }" />
+                        imgSrc="@{ owner.avatarUrl }" />
 
                     <TextView
                         android:layout_width="match_parent"

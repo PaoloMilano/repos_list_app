@@ -4,7 +4,10 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+apply plugin: 'realm-android'
+
 apply plugin: 'kotlin-kapt'
+
 
 android {
     compileSdkVersion 26
@@ -51,6 +54,8 @@ dependencies {
     compile "com.squareup.retrofit2:retrofit:$retrofit_version"
     compile "com.squareup.retrofit2:converter-gson:$retrofit_version"
     compile "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version"
+
+    compile "com.github.vicpinm:krealmextensions:2.1.0"
 
     compile 'com.squareup.picasso:picasso:2.5.2'
 
