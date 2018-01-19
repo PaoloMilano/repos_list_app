@@ -1,29 +1,41 @@
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:bind="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
-        <import type="android.view.View"/>
+
+        <import type="android.view.View" />
+
+
         <variable
             name="repoViewModel"
             type="com.spacitron.reposlistapp.repoviewmodel.RepositoryViewModel" />
+
+        <variable
+            name="onItemShownListener"
+            type="com.spacitron.reposlistapp.utils.ItemShownListener" />
+
+        <variable
+            name="onItemSelectedListener"
+            type="com.spacitron.reposlistapp.utils.ItemSelectedListener&lt;com.spacitron.reposlistapp.repoviewmodel.RepositoryModel>" />
     </data>
 
     <RelativeLayout
+        android:id="@+id/root_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
 
-        <android.support.v7.widget.RecyclerView
-            bind:items="@{ repoViewModel.repositoriesObservable }"
-            bind:onItemSelected="@{ repoViewModel }"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical" />
+            <android.support.v7.widget.RecyclerView
+                itemShownListener="@{ onItemShownListener }"
+                items="@{ repoViewModel.repositoriesObservable }"
+                onItemSelected="@{ onItemSelectedListener }"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical" />
+
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:visibility="@{ repoViewModel.isLoading() ? View.VISIBLE : View.GONE }"
-            />
+            android:visibility="@{ repoViewModel.isLoading() ? View.VISIBLE : View.GONE }" />
     </RelativeLayout>
 </layout>

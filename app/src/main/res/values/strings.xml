@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">ReposListApp</string>
     <string name="owner_text">Owned by:</string>
+    <string name="error_forbidden">Access to this resource is forbidden</string>
+    <string name="error_network">There was a network error</string>
+    <string name="error_other">There was an error</string>
 </resources>
