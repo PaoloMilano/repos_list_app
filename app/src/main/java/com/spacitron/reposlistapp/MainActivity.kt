@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val repositoryViewModel = ViewModelProviders.of(this).get(RepositoryViewModel::class.java)
-        repositoryViewModel.initialise(CachedRepositoryProvider(RetrofitGitHubServiceProvider(), "JakeWharton"))
+        initialiseViewModel(repositoryViewModel)
 
         val binding: ActivityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.repoViewModel = repositoryViewModel
@@ -54,8 +54,15 @@ class MainActivity : AppCompatActivity() {
                         Snackbar.make(root_view, errorString, Snackbar.LENGTH_SHORT).show()
                     }
                 })
-
+        pull_to_refresh.setOnRefreshListener {
+            pull_to_refresh.isRefreshing = false
+            initialiseViewModel(repositoryViewModel)
+        }
 
     }
 
+
+    private fun initialiseViewModel(repositoryViewModel: RepositoryViewModel){
+        repositoryViewModel.initialise(CachedRepositoryProvider(RetrofitGitHubServiceProvider(), "JakeWharton"))
+    }
 }

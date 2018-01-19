@@ -8,6 +8,7 @@ import com.spacitron.reposlistapp.utils.ErrorListener
 import com.spacitron.reposlistapp.utils.ItemSelectedListener
 import com.spacitron.reposlistapp.utils.ItemShownListener
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import retrofit2.HttpException
 import java.net.UnknownHostException
@@ -23,6 +24,7 @@ class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedListener
     val itemSelected = ObservableField<RepositoryModel>()
     val error = ObservableField<DataError>()
 
+    private val disposable = CompositeDisposable()
     private var repositoryProvider: CachedRepositoryProvider? = null
 
 
@@ -51,7 +53,9 @@ class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedListener
                         repositoriesObservable.add(PlaceholderRepositoryModel)
                     }
                 }
-
+                ?.let {
+                    disposable.add(it)
+                }
     }
 
     override fun onError(throwable: Throwable) {
@@ -80,6 +84,11 @@ class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedListener
 
     override fun itemSelected(item: RepositoryModel) {
         itemSelected.set(item)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        disposable.dispose()
     }
 
 }

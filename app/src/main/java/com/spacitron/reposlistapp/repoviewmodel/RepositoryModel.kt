@@ -4,8 +4,8 @@ import com.spacitron.reposlistapp.model.GitHubUser
 import com.spacitron.reposlistapp.model.Repository
 
 /**
- * We need to let the adapter have different display objects depending on the and
- * this is necessary because we cannot extend Realm data classes.
+ * We need to let the client have different display objects depending on whether we're at
+ * the end of the repo list or not. These classes are necessary because we cannot extend Realm data classes.
  */
 open class RepositoryDisplayModel
 
