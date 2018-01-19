@@ -1,18 +1,47 @@
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.spacitron.reposlistapp.MainActivity">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <data>
 
-</android.support.constraint.ConstraintLayout>
+        <import type="android.view.View" />
+
+
+        <variable
+            name="repoViewModel"
+            type="com.spacitron.reposlistapp.repoviewmodel.RepositoryViewModel" />
+
+        <variable
+            name="onItemShownListener"
+            type="com.spacitron.reposlistapp.utils.ItemShownListener" />
+
+        <variable
+            name="onItemSelectedListener"
+            type="com.spacitron.reposlistapp.utils.ItemSelectedListener&lt;com.spacitron.reposlistapp.repoviewmodel.RepositoryModel>" />
+    </data>
+
+    <RelativeLayout
+        android:id="@+id/root_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/pull_to_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <android.support.v7.widget.RecyclerView
+                itemShownListener="@{ onItemShownListener }"
+                items="@{ repoViewModel.repositoriesObservable }"
+                onItemSelected="@{ onItemSelectedListener }"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical" />
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="@{ repoViewModel.isLoading() ? View.VISIBLE : View.GONE }" />
+    </RelativeLayout>
+</layout>
