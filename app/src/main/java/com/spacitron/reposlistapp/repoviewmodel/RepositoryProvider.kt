@@ -1,5 +1,8 @@
-package com.spacitron.reposlistapp
+package com.spacitron.reposlistapp.repoviewmodel
 
+import com.spacitron.reposlistapp.model.Repository
+import com.spacitron.reposlistapp.reposervice.serviceproviders.GitHubServiceProvider
+import com.spacitron.reposlistapp.reposervice.services.GitHubService
 import io.reactivex.Maybe
 
 

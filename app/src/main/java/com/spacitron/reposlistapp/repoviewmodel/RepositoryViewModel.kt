@@ -1,9 +1,11 @@
-package com.spacitron.reposlistapp
+package com.spacitron.reposlistapp.repoviewmodel
 
 import android.arch.lifecycle.ViewModel
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
+import com.spacitron.reposlistapp.model.Repository
+import com.spacitron.reposlistapp.utils.ItemSelectedListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 

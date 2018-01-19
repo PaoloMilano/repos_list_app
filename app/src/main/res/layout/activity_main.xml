@@ -5,7 +5,7 @@
         <import type="android.view.View"/>
         <variable
             name="repoViewModel"
-            type="com.spacitron.reposlistapp.RepositoryViewModel" />
+            type="com.spacitron.reposlistapp.repoviewmodel.RepositoryViewModel" />
     </data>
 
     <RelativeLayout

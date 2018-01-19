@@ -1,5 +1,9 @@
 package com.spacitron.reposlistapp
 
+import com.spacitron.reposlistapp.model.Repository
+import com.spacitron.reposlistapp.reposervice.services.GitHubService
+import com.spacitron.reposlistapp.reposervice.serviceproviders.GitHubServiceProvider
+import com.spacitron.reposlistapp.repoviewmodel.RepositoryProvider
 import io.reactivex.Maybe
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -15,7 +19,7 @@ class ExampleUnitTest {
     @Test
     fun testPaginationEnds() {
 
-        val endedRepositoryProvider = RepositoryProvider(object:  GitHubServiceProvider {
+        val endedRepositoryProvider = RepositoryProvider(object : GitHubServiceProvider {
 
             override fun getGitHubService(): GitHubService {
 
@@ -43,7 +47,7 @@ class ExampleUnitTest {
     @Test
     fun testPaginationContinues() {
 
-        val unfinishedRepositoryProvider = RepositoryProvider(object:  GitHubServiceProvider {
+        val unfinishedRepositoryProvider = RepositoryProvider(object : GitHubServiceProvider {
 
             override fun getGitHubService(): GitHubService {
 

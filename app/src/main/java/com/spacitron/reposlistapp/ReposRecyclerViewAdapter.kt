@@ -6,8 +6,12 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
 import com.spacitron.reposlistapp.databinding.RepoItemViewBinding
+import com.spacitron.reposlistapp.model.Repository
+import com.spacitron.reposlistapp.utils.AnimationEndedListener
+import com.spacitron.reposlistapp.utils.ItemSelectedListener
+import com.spacitron.reposlistapp.utils.collapse
+import com.spacitron.reposlistapp.utils.expand
 import kotlinx.android.synthetic.main.repo_item_view.view.*
 import java.util.*
 
@@ -69,22 +73,17 @@ class ReposRecyclerViewAdapter : RecyclerView.Adapter<ReposRecyclerViewAdapter.R
 
                     // Manage the visibility of the avatar separately or it'll lok weird as it expands and contracts
                     binding.root.avatar.animate().alpha(0f).setDuration(IMG_ANIMATION_TIME).start()
-                    ExpandableLayoutExpander.collapse(descriptionBox)
+                    descriptionBox.collapse()
 
                 }else{
-                    ExpandableLayoutExpander.expand(descriptionBox, object : Animation.AnimationListener{
-                        override fun onAnimationRepeat(animation: Animation?) {
+
+                    descriptionBox.expand(object: AnimationEndedListener {
+                        override fun animationStatus(status: AnimationEndedListener.AnimationStatus) {
+                            if(status == AnimationEndedListener.AnimationStatus.COMPLETED){
+                                // Manage the visibility of the avatar separately or it'll lok weird as it expands and contracts
+                                binding.root.avatar.animate().alpha(1f).start()
+                            }
                         }
-
-                        override fun onAnimationStart(animation: Animation?) {
-                        }
-
-                        override fun onAnimationEnd(animation: Animation?) {
-
-                            // Manage the visibility of the avatar separately or it'll lok weird as it expands and contracts
-                            binding.root.avatar.animate().alpha(1f).start()
-                        }
-
                     })
                 }
             }

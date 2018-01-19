@@ -8,15 +8,15 @@
 
         <variable
             name="onItemSelectedListener"
-            type="com.spacitron.reposlistapp.ItemSelectedListener" />
+            type="com.spacitron.reposlistapp.utils.ItemSelectedListener" />
 
         <variable
             name="repository"
-            type="com.spacitron.reposlistapp.Repository" />
+            type="com.spacitron.reposlistapp.model.Repository" />
 
         <variable
             name="owner"
-            type="com.spacitron.reposlistapp.GitHubUser" />
+            type="com.spacitron.reposlistapp.model.GitHubUser" />
     </data>
 
     <FrameLayout

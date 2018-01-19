@@ -1,10 +1,11 @@
-package com.spacitron.reposlistapp
+package com.spacitron.reposlistapp.reposervice.serviceproviders
 
+import com.spacitron.reposlistapp.reposervice.services.GitHubService
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
-class RetrofitGitHubServiceProvider: GitHubServiceProvider{
+class RetrofitGitHubServiceProvider: GitHubServiceProvider {
 
     override fun getGitHubService(): GitHubService {
         val retrofit = Retrofit.Builder()
