@@ -7,7 +7,7 @@ import com.spacitron.reposlistapp.utils.ErrorListener
 import com.vicpin.krealmextensions.deleteAll
 import com.vicpin.krealmextensions.querySorted
 import com.vicpin.krealmextensions.saveAll
-import io.reactivex.Maybe
+import io.reactivex.Single
 import io.realm.Sort
 
 
@@ -22,44 +22,52 @@ open class CachedRepositoryProvider(gitHubServiceProvider: GitHubServiceProvider
         gitHubService = gitHubServiceProvider.getGitHubService()
     }
 
-    fun setErrorListener(errorListener: ErrorListener){
+    fun setErrorListener(errorListener: ErrorListener) {
         this.errorListener = errorListener
     }
 
     open fun hasNext() = nextPage != -1
 
-    fun getNextReposMaybe(): Maybe<List<Repository>> {
+    fun getNextRepos(): Single<List<Repository>> {
 
         if (nextPage == -1) {
-            return Maybe.never()
+            return Single.never()
         }
 
         return gitHubService.getRepos(gitHubUser, nextPage, itemsPerPage)
                 .doOnEvent { repos, error ->
-
-                    // To keep the cache clean and up to date just delete all items
-                    // when we can successfully start fetching the list from the first page
-                    if(nextPage==1 && error == null){
-                        Repository().deleteAll()
-                    }
-
-                    nextPage = if (repos == null || repos?.size < itemsPerPage) {
-                        -1
-                    } else {
-                        nextPage + 1
-                    }
-
-                    repos?.saveAll()
+                    saveReposToCache(repos)
                 }
                 .onErrorReturn {
                     errorListener?.onError(it)
                     getFromCache()
                 }
+                .doOnEvent{ repos, error ->
+                    nextPage = if (repos != null && repos?.size < itemsPerPage) {
+                        -1
+                    } else {
+                        nextPage + 1
+                    }
+                }
 
+    }
+
+    protected open fun saveReposToCache(repos: List<Repository>) {
+
+        // To keep the cache clean and up to date just delete all items
+        // when we can successfully start fetching the list from the first page
+        if (nextPage == 1 && repos != null) {
+            Repository().deleteAll()
+        }
+        repos?.saveAll()
     }
 
 
     protected open fun getFromCache(): List<Repository> {
+
+        if(!hasNext()){
+            return emptyList()
+        }
 
         val repos = Repository().querySorted("name", Sort.ASCENDING)
 
@@ -72,10 +80,6 @@ open class CachedRepositoryProvider(gitHubServiceProvider: GitHubServiceProvider
             startIndex + itemsPerPage
         } else {
             repos.size
-        }
-
-        if (startIndex < 0 || endIndex < 0) {
-            return ArrayList()
         }
 
         return repos.subList(startIndex, endIndex)

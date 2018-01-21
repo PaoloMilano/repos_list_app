@@ -6,7 +6,7 @@ import com.spacitron.reposlistapp.reposervice.services.GitHubService
 import com.spacitron.reposlistapp.repoviewmodel.CachedRepositoryProvider
 import com.spacitron.reposlistapp.repoviewmodel.RepositoryDisplayModel
 import com.spacitron.reposlistapp.repoviewmodel.RepositoryViewModel
-import io.reactivex.Maybe
+import io.reactivex.Single
 import junit.framework.Assert.assertEquals
 import org.junit.Test
 
@@ -55,8 +55,8 @@ class RepositoryViewModelTest {
     class TestyGithubServiceProvider : GitHubServiceProvider {
         override fun getGitHubService(): GitHubService {
             return object: GitHubService {
-                override fun getRepos(user: String, page: Int, perPage: Int): Maybe<List<Repository>> {
-                    return Maybe.never()
+                override fun getRepos(user: String, page: Int, perPage: Int): Single<List<Repository>> {
+                    return Single.never()
                 }
             }
         }
