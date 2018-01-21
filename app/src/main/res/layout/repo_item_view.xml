@@ -29,10 +29,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
             android:clickable="true"
             android:clipToPadding="false"
-            android:onClick="@{()-> onItemSelectedListener.itemSelected(repositoryModel) }"
             android:orientation="vertical">
 
             <ImageView
@@ -86,41 +84,31 @@
                     android:text="@{ repositoryModel.description }"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/half_standard_margin"
-                    android:paddingBottom="@dimen/half_standard_margin"
-                    android:paddingLeft="@dimen/standard_margin"
-                    android:paddingRight="@dimen/standard_margin"
-                    android:text="@string/owner_text"
-                    android:textStyle="bold"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:paddingBottom="@dimen/half_standard_margin"
-                    android:paddingLeft="@dimen/standard_margin"
-                    android:paddingRight="@dimen/standard_margin">
-
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/avatar"
-                        android:layout_width="@dimen/quadruple_standard_margin"
-                        android:layout_height="@dimen/quadruple_standard_margin"
-                        android:alpha="0"
-                        imgSrc="@{ owner.avatarUrl }" />
+                    android:background="?selectableItemBackground"
+                    android:padding="@dimen/standard_margin"
+                    android:onClick="@{()-> onItemSelectedListener.itemSelected(repositoryModel) }">
 
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:gravity="center|left"
-                        android:paddingLeft="@dimen/standard_margin"
-                        android:paddingRight="@dimen/standard_margin"
-                        android:text="@{ owner.login }"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:paddingRight="@dimen/half_standard_margin"
+                        android:text="@{ repositoryModel.htmlUrl }"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:layout_weight="1"/>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_open_in_new_black24dp"/>
+
                 </LinearLayout>
 
             </LinearLayout>

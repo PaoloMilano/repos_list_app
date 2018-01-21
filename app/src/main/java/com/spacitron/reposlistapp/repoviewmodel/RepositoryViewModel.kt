@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModel
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
+import com.spacitron.reposlistapp.model.GitHubUser
 import com.spacitron.reposlistapp.utils.ErrorListener
 import com.spacitron.reposlistapp.utils.ItemSelectedListener
 import com.spacitron.reposlistapp.utils.ItemShownListener
@@ -23,7 +24,7 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
     var repositoriesObservable: ObservableArrayList<RepositoryDisplayModel>? = null
     val isLoading = ObservableBoolean()
     val itemSelected = ObservableField<RepositoryModel>()
-    val repoOwnerName = ObservableField<String>()
+    val repoOwner = ObservableField<GitHubUser>()
     val error = ObservableField<DataError>()
 
     private val disposable = CompositeDisposable()
@@ -31,11 +32,18 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
     private var itemShownSubject: PublishSubject<Int>? = null
 
 
-    fun initialise(repositoryProvider: CachedRepositoryProvider) {
-        repoOwnerName.set("bmn")
+    fun initialise(repositoryProvider: CachedRepositoryProvider, gitHubUserProvider: GitHubUserProvider) {
         if(repositoriesObservable == null){
             repositoriesObservable = ObservableArrayList<RepositoryDisplayModel>()
             refresh(repositoryProvider)
+
+            gitHubUserProvider.setErrorListener(this)
+            gitHubUserProvider.getUser()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io())
+                    .subscribe { gitHubUser ->
+                        repoOwner.set(gitHubUser)
+                    }
         }
     }
 

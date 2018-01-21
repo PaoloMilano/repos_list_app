@@ -10,7 +10,6 @@ import com.spacitron.reposlistapp.databinding.RepoItemViewBinding
 import com.spacitron.reposlistapp.repoviewmodel.PlaceholderRepositoryModel
 import com.spacitron.reposlistapp.repoviewmodel.RepositoryDisplayModel
 import com.spacitron.reposlistapp.repoviewmodel.RepositoryModel
-import com.spacitron.reposlistapp.utils.AnimationEndedListener
 import com.spacitron.reposlistapp.utils.ItemSelectedListener
 import com.spacitron.reposlistapp.utils.collapse
 import com.spacitron.reposlistapp.utils.expand
@@ -90,21 +89,9 @@ class ReposRecyclerViewAdapter : RecyclerView.Adapter< RecyclerView.ViewHolder>(
 
             binding.root.info_butt.setOnClickListener{
                 if (descriptionBox.visibility == View.VISIBLE) {
-
-                    // Manage the visibility of the avatar separately or it'll lok weird as it expands and contracts
-                    binding.root.avatar.animate().alpha(0f).setDuration(IMG_ANIMATION_TIME).start()
                     descriptionBox.collapse()
-
                 }else{
-
-                    descriptionBox.expand(object: AnimationEndedListener {
-                        override fun animationStatus(status: AnimationEndedListener.AnimationStatus) {
-                            if(status == AnimationEndedListener.AnimationStatus.COMPLETED){
-                                // Manage the visibility of the avatar separately or it'll lok weird as it expands and contracts
-                                binding.root.avatar.animate().alpha(1f).start()
-                            }
-                        }
-                    })
+                    descriptionBox.expand()
                 }
             }
         }

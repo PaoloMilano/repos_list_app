@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity
 import com.spacitron.reposlistapp.databinding.ActivityMainBinding
 import com.spacitron.reposlistapp.reposervice.serviceproviders.RetrofitGitHubServiceProvider
 import com.spacitron.reposlistapp.repoviewmodel.CachedRepositoryProvider
+import com.spacitron.reposlistapp.repoviewmodel.GitHubUserProvider
 import com.spacitron.reposlistapp.repoviewmodel.RepositoryViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -29,8 +30,9 @@ class MainActivity : AppCompatActivity() {
 
 
         val repositoryViewModel = ViewModelProviders.of(this).get(RepositoryViewModel::class.java)
-        repositoryViewModel.initialise(CachedRepositoryProvider(RetrofitGitHubServiceProvider(), GITHUB_USER_NAME))
 
+        val retroFitProvider = RetrofitGitHubServiceProvider()
+        repositoryViewModel.initialise(CachedRepositoryProvider(retroFitProvider, GITHUB_USER_NAME), GitHubUserProvider(retroFitProvider, GITHUB_USER_NAME))
 
         val binding: ActivityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.repoViewModel = repositoryViewModel
@@ -66,6 +68,12 @@ class MainActivity : AppCompatActivity() {
         pull_to_refresh.setOnRefreshListener {
             pull_to_refresh.isRefreshing = false
             repositoryViewModel.refresh(CachedRepositoryProvider(RetrofitGitHubServiceProvider(), GITHUB_USER_NAME))
+        }
+
+        user_url_container.setOnClickListener {
+            val i = Intent(Intent.ACTION_VIEW)
+            i.data = Uri.parse(repositoryViewModel.repoOwner.get().htmlUrl)
+            startActivity(i)
         }
     }
 }
