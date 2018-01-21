@@ -4,9 +4,8 @@ import com.spacitron.reposlistapp.model.Repository
 import com.spacitron.reposlistapp.reposervice.serviceproviders.GitHubServiceProvider
 import com.spacitron.reposlistapp.reposervice.services.GitHubService
 import com.spacitron.reposlistapp.repoviewmodel.CachedRepositoryProvider
-import io.reactivex.Maybe
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import io.reactivex.Single
+import org.junit.Assert.*
 import org.junit.Test
 
 /**
@@ -19,25 +18,22 @@ class RepositoryProviderTest {
     @Test
     fun testPaginationEnds() {
 
-        val endedRepositoryProvider = CachedRepositoryProvider(object : GitHubServiceProvider {
+        val endedRepositoryProvider = TestyCachedRepositoryProvider(object : GitHubServiceProvider {
 
             override fun getGitHubService(): GitHubService {
 
                 return object : GitHubService {
 
-                    override fun getRepos(user: String, page: Int, perPage: Int): Maybe<List<Repository>> {
+                    override fun getRepos(user: String, page: Int, perPage: Int): Single<List<Repository>> {
 
-                        val repo = Repository()
-                        repo.id = 123
-                        return Maybe.just(listOf(repo))
+                        return Single.just(listOf(Repository()))
 
                     }
                 }
             }
         }, "")
 
-
-        endedRepositoryProvider.getNextReposMaybe().subscribe()
+        endedRepositoryProvider.getNextRepos().subscribe()
 
         // The service returned fewer items than expected. We can assume there's no more to fetch.
         assertFalse(endedRepositoryProvider.hasNext())
@@ -47,20 +43,15 @@ class RepositoryProviderTest {
     @Test
     fun testPaginationContinues() {
 
-        val unfinishedRepositoryProvider = CachedRepositoryProvider(object : GitHubServiceProvider {
+        val unfinishedRepositoryProvider = TestyCachedRepositoryProvider(object : GitHubServiceProvider {
 
             override fun getGitHubService(): GitHubService {
 
                 return object : GitHubService {
 
-                    override fun getRepos(user: String, page: Int, perPage: Int): Maybe<List<Repository>> {
+                    override fun getRepos(user: String, page: Int, perPage: Int): Single<List<Repository>> {
 
-                        val repo1 = Repository()
-                        repo1.id = 123
-
-                        val repo2 = Repository()
-                        repo2.id = 456
-                        return Maybe.just(listOf(repo1, repo2))
+                        return Single.just(listOf(Repository(),Repository()))
 
                     }
                 }
@@ -68,9 +59,45 @@ class RepositoryProviderTest {
         }, "", 2)
 
 
-        unfinishedRepositoryProvider.getNextReposMaybe().subscribe()
+        unfinishedRepositoryProvider.getNextRepos().subscribe()
 
-        // The service returned the same number of items we requested. There could be more so this has not yet ended.
+        // The service returned the same number of items we requested (2).
+        // This means there could be more so ensure that pagination has not yet ended.
         assertTrue(unfinishedRepositoryProvider.hasNext())
+    }
+
+    @Test
+    fun testFallsBackToCacheOnError() {
+
+        val repositoryProvider = TestyCachedRepositoryProvider(object : GitHubServiceProvider {
+            override fun getGitHubService(): GitHubService {
+                return object : GitHubService {
+                    override fun getRepos(user: String, page: Int, perPage: Int): Single<List<Repository>> {
+                        return Single.error(Exception())
+                    }
+                }
+            }
+        }, "")
+
+        repositoryProvider.getNextRepos().subscribe()
+
+        // Check that we called the cache when an error was thrown
+        assertEquals(1, repositoryProvider.timesCalled)
+    }
+
+
+    class TestyCachedRepositoryProvider(gitHubServiceProvider: GitHubServiceProvider, gitHubUser: String, itemsPerPage: Int = 15) : CachedRepositoryProvider(gitHubServiceProvider, gitHubUser, itemsPerPage) {
+
+        var timesCalled = 0
+
+        override fun getFromCache(): List<Repository> {
+            timesCalled +=1
+            return ArrayList()
+        }
+
+        // Override this to ensure we don't touch Realm and prevent exceptions being thrown
+        override fun saveReposToCache(repos: List<Repository>) {
+
+        }
     }
 }

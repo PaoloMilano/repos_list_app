@@ -50,16 +50,17 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
     }
 
     protected open fun getNextRepositories() {
-        repositoryProvider?.getNextReposMaybe()
+        repositoryProvider?.getNextRepos()
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.map {
                     // Map data model to display classes
                     it.map { RepositoryModel(it) }
                 }
-                ?.subscribe {
+                ?.subscribe {repoModels, error ->
+
                     isLoading.set(false)
-                    repositoriesObservable.addAll(it)
+                    repositoriesObservable.addAll(repoModels)
 
                     repositoriesObservable.remove(PlaceholderRepositoryModel)
                     if (repositoryProvider?.hasNext() ?: false) {
