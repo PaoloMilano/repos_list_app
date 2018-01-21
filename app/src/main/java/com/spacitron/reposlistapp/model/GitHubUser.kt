@@ -13,9 +13,13 @@ open class GitHubUser: RealmModel {
 
     var login: String? = null
 
+    var name: String? = null
+
     @SerializedName("avatar_url")
     var avatarUrl: String? = null
 
     @SerializedName("html_url")
     var htmlUrl: String? = null
+
+    var company: String? = null
 }

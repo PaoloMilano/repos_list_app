@@ -1,9 +1,10 @@
 package com.spacitron.reposlistapp
 
+import com.spacitron.reposlistapp.model.GitHubUser
 import com.spacitron.reposlistapp.model.Repository
 import com.spacitron.reposlistapp.reposervice.serviceproviders.GitHubServiceProvider
 import com.spacitron.reposlistapp.reposervice.services.GitHubService
-import com.spacitron.reposlistapp.repoviewmodel.CachedRepositoryProvider
+import com.spacitron.reposlistapp.repoviewmodel.CachedRepositoryManager
 import io.reactivex.Single
 import org.junit.Assert.*
 import org.junit.Test
@@ -18,11 +19,15 @@ class RepositoryProviderTest {
     @Test
     fun testPaginationEnds() {
 
-        val endedRepositoryProvider = TestyCachedRepositoryProvider(object : GitHubServiceProvider {
+        val endedRepositoryProvider = TestyCachedRepositoryManager(object : GitHubServiceProvider {
 
             override fun getGitHubService(): GitHubService {
 
                 return object : GitHubService {
+
+                    override fun getUser(user: String): Single<GitHubUser> {
+                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    }
 
                     override fun getRepos(user: String, page: Int, perPage: Int): Single<List<Repository>> {
 
@@ -43,11 +48,15 @@ class RepositoryProviderTest {
     @Test
     fun testPaginationContinues() {
 
-        val unfinishedRepositoryProvider = TestyCachedRepositoryProvider(object : GitHubServiceProvider {
+        val unfinishedRepositoryProvider = TestyCachedRepositoryManager(object : GitHubServiceProvider {
 
             override fun getGitHubService(): GitHubService {
 
                 return object : GitHubService {
+
+                    override fun getUser(user: String): Single<GitHubUser> {
+                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    }
 
                     override fun getRepos(user: String, page: Int, perPage: Int): Single<List<Repository>> {
 
@@ -69,9 +78,14 @@ class RepositoryProviderTest {
     @Test
     fun testFallsBackToCacheOnError() {
 
-        val repositoryProvider = TestyCachedRepositoryProvider(object : GitHubServiceProvider {
+        val repositoryProvider = TestyCachedRepositoryManager(object : GitHubServiceProvider {
             override fun getGitHubService(): GitHubService {
                 return object : GitHubService {
+
+                    override fun getUser(user: String): Single<GitHubUser> {
+                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    }
+
                     override fun getRepos(user: String, page: Int, perPage: Int): Single<List<Repository>> {
                         return Single.error(Exception())
                     }
@@ -86,7 +100,7 @@ class RepositoryProviderTest {
     }
 
 
-    class TestyCachedRepositoryProvider(gitHubServiceProvider: GitHubServiceProvider, gitHubUser: String, itemsPerPage: Int = 15) : CachedRepositoryProvider(gitHubServiceProvider, gitHubUser, itemsPerPage) {
+    class TestyCachedRepositoryManager(gitHubServiceProvider: GitHubServiceProvider, gitHubUser: String, itemsPerPage: Int = 15) : CachedRepositoryManager(gitHubServiceProvider, gitHubUser, itemsPerPage) {
 
         var timesCalled = 0
 

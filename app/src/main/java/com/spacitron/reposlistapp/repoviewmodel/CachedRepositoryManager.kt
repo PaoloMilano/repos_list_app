@@ -11,7 +11,7 @@ import io.reactivex.Single
 import io.realm.Sort
 
 
-open class CachedRepositoryProvider(gitHubServiceProvider: GitHubServiceProvider, private val gitHubUser: String, private val itemsPerPage: Int = 15) {
+open class CachedRepositoryManager(gitHubServiceProvider: GitHubServiceProvider, private val gitHubUser: String, private val itemsPerPage: Int = 15) {
 
     private var nextPage: Int
     private val gitHubService: GitHubService

@@ -26,18 +26,18 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
     val error = ObservableField<DataError>()
 
     private val disposable = CompositeDisposable()
-    private var repositoryProvider: CachedRepositoryProvider? = null
+    private var repositoryProvider: CachedRepositoryManager? = null
     private var itemShownSubject: PublishSubject<Int>? = null
 
 
-    fun initialise(repositoryProvider: CachedRepositoryProvider) {
+    fun initialise(repositoryProvider: CachedRepositoryManager) {
         if(repositoriesObservable == null){
             repositoriesObservable = ObservableArrayList<RepositoryDisplayModel>()
             refresh(repositoryProvider)
         }
     }
 
-    open fun refresh(repositoryProvider: CachedRepositoryProvider) {
+    open fun refresh(repositoryProvider: CachedRepositoryManager) {
         repositoryProvider.setErrorListener(this)
         this.repositoryProvider = repositoryProvider
 

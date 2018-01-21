@@ -10,7 +10,7 @@ import com.spacitron.reposlistapp.repoviewmodel.RepositoryModel
 import com.squareup.picasso.Picasso
 
 @BindingAdapter("imgSrc")
-fun bindImageSource(view: ImageView, imgUrl: String) {
+fun bindImageSource(view: ImageView, imgUrl: String?) {
     Picasso.with(view.context).load(imgUrl).into(view);
 }
 
