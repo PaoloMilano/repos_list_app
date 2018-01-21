@@ -16,12 +16,15 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
+    private val GITHUB_USER_NAME = "JakeWharton"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         val repositoryViewModel = ViewModelProviders.of(this).get(RepositoryViewModel::class.java)
-        initialiseViewModel(repositoryViewModel)
+        repositoryViewModel.initialise(CachedRepositoryProvider(RetrofitGitHubServiceProvider(), GITHUB_USER_NAME))
+
 
         val binding: ActivityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.repoViewModel = repositoryViewModel
@@ -56,13 +59,7 @@ class MainActivity : AppCompatActivity() {
                 })
         pull_to_refresh.setOnRefreshListener {
             pull_to_refresh.isRefreshing = false
-            initialiseViewModel(repositoryViewModel)
+            repositoryViewModel.refresh(CachedRepositoryProvider(RetrofitGitHubServiceProvider(), GITHUB_USER_NAME))
         }
-
-    }
-
-
-    private fun initialiseViewModel(repositoryViewModel: RepositoryViewModel){
-        repositoryViewModel.initialise(CachedRepositoryProvider(RetrofitGitHubServiceProvider(), "JakeWharton"))
     }
 }

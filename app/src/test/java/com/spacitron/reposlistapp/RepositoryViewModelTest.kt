@@ -21,7 +21,7 @@ class RepositoryViewModelTest {
 
         // Add enough elements to trigger a next page request
         for (i in 1..5) {
-            repositoryViewModel.repositoriesObservable.add(RepositoryDisplayModel())
+            repositoryViewModel.repositoriesObservable?.add(RepositoryDisplayModel())
         }
 
         // Simulate scrolling through the list a few times
@@ -33,16 +33,37 @@ class RepositoryViewModelTest {
 
         // Only two page requests should have taken place, one when
         // initialised and one for requesting the next page
-        assertEquals(2, repositoryViewModel.timesCalled)
+        assertEquals(2, repositoryViewModel.nextTimesCalled)
+    }
+
+
+    @Test
+    fun testOnlyInitialisedOnce() {
+
+        val repositoryViewModel = TestyRepositoryViewModel()
+
+        val provider = TestyRepositoryProvider(TestyGithubServiceProvider(), "")
+        repositoryViewModel.initialise(provider)
+        repositoryViewModel.initialise(provider)
+        repositoryViewModel.initialise(provider)
+
+        // On initialisation the RepositoryViewModel makes a call to
+        // refresh(). This should only happen once during a ViewModel object's lifetime.
+        assertEquals(1, repositoryViewModel.refreshTimesCalled)
     }
 
 
     class TestyRepositoryViewModel : RepositoryViewModel() {
 
-        var timesCalled = 0
+        var nextTimesCalled = 0
+        var refreshTimesCalled = 0
 
         override fun getNextRepositories() {
-            timesCalled += 1
+            nextTimesCalled += 1
+        }
+
+        override fun refresh(repositoryProvider: CachedRepositoryProvider) {
+            refreshTimesCalled += 1
         }
     }
 

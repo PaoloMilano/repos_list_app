@@ -20,7 +20,7 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
         NETWORK_ERROR, FORBIDDEN, OTHER
     }
 
-    val repositoriesObservable = ObservableArrayList<RepositoryDisplayModel>()
+    var repositoriesObservable: ObservableArrayList<RepositoryDisplayModel>? = null
     val isLoading = ObservableBoolean()
     val itemSelected = ObservableField<RepositoryModel>()
     val error = ObservableField<DataError>()
@@ -31,19 +31,30 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
 
 
     fun initialise(repositoryProvider: CachedRepositoryProvider) {
+        if(repositoriesObservable == null){
+            repositoriesObservable = ObservableArrayList<RepositoryDisplayModel>()
+            refresh(repositoryProvider)
+        }
+    }
 
+    open fun refresh(repositoryProvider: CachedRepositoryProvider) {
         repositoryProvider.setErrorListener(this)
         this.repositoryProvider = repositoryProvider
 
-        repositoriesObservable.clear()
+        repositoriesObservable?.clear()
 
+        // This will keep track of the pages we requested so we only
+        // make 1 request per scroll event
         itemShownSubject = PublishSubject.create()
         itemShownSubject
-                ?.filter { it == repositoriesObservable.size - 4 && repositoryProvider?.hasNext() }
+                ?.filter {
+                    it >= (repositoriesObservable?.size ?:0) - 4 && repositoryProvider?.hasNext()
+                }
                 ?.distinct()
                 ?.subscribe {
                     getNextRepositories()
                 }
+                ?.let { disposable.add(it) }
 
         isLoading.set(true)
         getNextRepositories()
@@ -57,19 +68,17 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
                     // Map data model to display classes
                     it.map { RepositoryModel(it) }
                 }
-                ?.subscribe {repoModels, error ->
+                ?.subscribe { repoModels, error ->
 
                     isLoading.set(false)
-                    repositoriesObservable.addAll(repoModels)
+                    repositoriesObservable?.addAll(repoModels)
 
-                    repositoriesObservable.remove(PlaceholderRepositoryModel)
+                    repositoriesObservable?.remove(PlaceholderRepositoryModel)
                     if (repositoryProvider?.hasNext() ?: false) {
-                        repositoriesObservable.add(PlaceholderRepositoryModel)
+                        repositoriesObservable?.add(PlaceholderRepositoryModel)
                     }
                 }
-                ?.let {
-                    disposable.add(it)
-                }
+                ?.let { disposable.add(it) }
     }
 
     override fun onError(throwable: Throwable) {
