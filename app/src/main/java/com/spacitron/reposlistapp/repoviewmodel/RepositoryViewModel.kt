@@ -48,7 +48,7 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
         itemShownSubject = PublishSubject.create()
         itemShownSubject
                 ?.filter {
-                    it >= (repositoriesObservable?.size ?:0) - 4 && repositoryProvider?.hasNext()
+                    it == (repositoriesObservable?.size ?:0) - 4 && repositoryProvider?.hasNext()
                 }
                 ?.distinct()
                 ?.subscribe {

@@ -63,6 +63,7 @@ class RepositoryViewModelTest {
         }
 
         override fun refresh(repositoryProvider: CachedRepositoryProvider) {
+            super.refresh(repositoryProvider)
             refreshTimesCalled += 1
         }
     }
