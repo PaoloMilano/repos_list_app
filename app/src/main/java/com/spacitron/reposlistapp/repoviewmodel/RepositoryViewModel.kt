@@ -7,7 +7,6 @@ import android.databinding.ObservableField
 import com.spacitron.reposlistapp.utils.ErrorListener
 import com.spacitron.reposlistapp.utils.ItemSelectedListener
 import com.spacitron.reposlistapp.utils.ItemShownListener
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
@@ -63,7 +62,7 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
     protected open fun getNextRepositories() {
         repositoryProvider?.getNextRepos()
                 ?.subscribeOn(Schedulers.io())
-                ?.observeOn(AndroidSchedulers.mainThread())
+                ?.observeOn(Schedulers.io())
                 ?.map {
                     // Map data model to display classes
                     it.map { RepositoryModel(it) }
@@ -92,10 +91,14 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
             else -> DataError.OTHER
         }
 
+        error?.get()?.let {
+            if(it == errorOutput){
+                // Force notification or you clients not receive new
+                // errors unless a new exception is thrown
+                error.notifyChange()
+            }
+        }
         error.set(errorOutput)
-        // Force notification or you clients not receive new
-        // errors unless a new exception is thrown
-        error.notifyChange()
     }
 
 
@@ -104,6 +107,13 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
     }
 
     override fun itemSelected(item: RepositoryModel) {
+        itemSelected?.get()?.id.let{
+            if(it == item.id){
+                // Force notification or you clients not receive new
+                // errors unless a new exception is thrown
+                itemSelected.notifyChange()
+            }
+        }
         itemSelected.set(item)
     }
 
