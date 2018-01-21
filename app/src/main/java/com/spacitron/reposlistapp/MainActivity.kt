@@ -20,7 +20,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
+        setSupportActionBar(toolbar)
 
         val repositoryViewModel = ViewModelProviders.of(this).get(RepositoryViewModel::class.java)
         repositoryViewModel.initialise(CachedRepositoryProvider(RetrofitGitHubServiceProvider(), GITHUB_USER_NAME))
