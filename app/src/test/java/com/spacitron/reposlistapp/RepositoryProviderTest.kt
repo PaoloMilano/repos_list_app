@@ -5,8 +5,7 @@ import com.spacitron.reposlistapp.reposervice.serviceproviders.GitHubServiceProv
 import com.spacitron.reposlistapp.reposervice.services.GitHubService
 import com.spacitron.reposlistapp.repoviewmodel.CachedRepositoryProvider
 import io.reactivex.Maybe
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
 import org.junit.Test
 
 /**
@@ -72,5 +71,35 @@ class RepositoryProviderTest {
 
         // The service returned the same number of items we requested. There could be more so this has not yet ended.
         assertTrue(unfinishedRepositoryProvider.hasNext())
+    }
+
+    @Test
+    fun testFallsBackToCacheOnError() {
+
+        val repositoryProvider = TestyCachedRepositoryProvider(object : GitHubServiceProvider {
+            override fun getGitHubService(): GitHubService {
+                return object : GitHubService {
+                    override fun getRepos(user: String, page: Int, perPage: Int): Maybe<List<Repository>> {
+                        return Maybe.error(Exception())
+                    }
+                }
+            }
+        }, "")
+
+        repositoryProvider.getNextReposMaybe().subscribe()
+
+        // Check that we called the cache when an error was thrown
+        assertEquals(1, repositoryProvider.timesCalled)
+    }
+
+
+    class TestyCachedRepositoryProvider(gitHubServiceProvider: GitHubServiceProvider, gitHubUser: String) : CachedRepositoryProvider(gitHubServiceProvider, gitHubUser) {
+
+        var timesCalled = 0
+
+        override fun getFromCache(): List<Repository> {
+            timesCalled +=1
+            return ArrayList()
+        }
     }
 }

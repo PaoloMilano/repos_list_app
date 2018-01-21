@@ -58,6 +58,7 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
                     it.map { RepositoryModel(it) }
                 }
                 ?.subscribe {
+
                     isLoading.set(false)
                     repositoriesObservable.addAll(it)
 
