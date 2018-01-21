@@ -3,9 +3,9 @@ package com.spacitron.reposlistapp
 import com.spacitron.reposlistapp.model.Repository
 import com.spacitron.reposlistapp.reposervice.serviceproviders.GitHubServiceProvider
 import com.spacitron.reposlistapp.reposervice.services.GitHubService
-import com.spacitron.reposlistapp.repoviewmodel.CachedRepositoryProvider
+import com.spacitron.reposlistapp.repoviewmodel.CachedRepositoryManager
 import com.spacitron.reposlistapp.repoviewmodel.RepositoryDisplayModel
-import com.spacitron.reposlistapp.repoviewmodel.RepositoryViewModel
+import com.spacitron.reposlistapp.repoviewmodel.UserViewModel
 import io.reactivex.Single
 import junit.framework.Assert.assertEquals
 import org.junit.Test
@@ -53,7 +53,7 @@ class RepositoryViewModelTest {
     }
 
 
-    class TestyRepositoryViewModel : RepositoryViewModel() {
+    class TestyRepositoryViewModel : UserViewModel() {
 
         var nextTimesCalled = 0
         var refreshTimesCalled = 0
@@ -62,13 +62,13 @@ class RepositoryViewModelTest {
             nextTimesCalled += 1
         }
 
-        override fun refresh(repositoryProvider: CachedRepositoryProvider) {
+        override fun refresh(repositoryProvider: CachedRepositoryManager) {
             super.refresh(repositoryProvider)
             refreshTimesCalled += 1
         }
     }
 
-    class TestyRepositoryProvider(gitHubServiceProvider: GitHubServiceProvider, gitHubUser: String) : CachedRepositoryProvider(gitHubServiceProvider, gitHubUser) {
+    class TestyRepositoryProvider(gitHubServiceProvider: GitHubServiceProvider, gitHubUser: String) : CachedRepositoryManager(gitHubServiceProvider, gitHubUser) {
         override fun hasNext(): Boolean {
             return true
         }

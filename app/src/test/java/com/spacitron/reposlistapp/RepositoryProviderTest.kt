@@ -3,7 +3,7 @@ package com.spacitron.reposlistapp
 import com.spacitron.reposlistapp.model.Repository
 import com.spacitron.reposlistapp.reposervice.serviceproviders.GitHubServiceProvider
 import com.spacitron.reposlistapp.reposervice.services.GitHubService
-import com.spacitron.reposlistapp.repoviewmodel.CachedRepositoryProvider
+import com.spacitron.reposlistapp.repoviewmodel.CachedRepositoryManager
 import io.reactivex.Single
 import org.junit.Assert.*
 import org.junit.Test
@@ -86,7 +86,7 @@ class RepositoryProviderTest {
     }
 
 
-    class TestyCachedRepositoryProvider(gitHubServiceProvider: GitHubServiceProvider, gitHubUser: String, itemsPerPage: Int = 15) : CachedRepositoryProvider(gitHubServiceProvider, gitHubUser, itemsPerPage) {
+    class TestyCachedRepositoryProvider(gitHubServiceProvider: GitHubServiceProvider, gitHubUser: String, itemsPerPage: Int = 15) : CachedRepositoryManager(gitHubServiceProvider, gitHubUser, itemsPerPage) {
 
         var timesCalled = 0
 

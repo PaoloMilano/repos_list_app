@@ -19,9 +19,6 @@ import java.util.*
 
 class ReposRecyclerViewAdapter : RecyclerView.Adapter< RecyclerView.ViewHolder>() {
 
-
-    private val IMG_ANIMATION_TIME: Long = 40
-
     private val REPO_VIEW_TYPE = 0
     private val PLACEHOLDER_VIEW_TYPE = 1
 

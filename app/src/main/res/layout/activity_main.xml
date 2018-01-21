@@ -5,16 +5,8 @@
         <import type="android.view.View" />
 
         <variable
-            name="repoViewModel"
-            type="com.spacitron.reposlistapp.repoviewmodel.RepositoryViewModel" />
-
-        <variable
-            name="onItemShownListener"
-            type="com.spacitron.reposlistapp.utils.ItemShownListener" />
-
-        <variable
-            name="onItemSelectedListener"
-            type="com.spacitron.reposlistapp.utils.ItemSelectedListener&lt;com.spacitron.reposlistapp.repoviewmodel.RepositoryModel>" />
+            name="userViewModel"
+            type="com.spacitron.reposlistapp.userviewmodel.GitHubUserViewModel" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -37,7 +29,7 @@
                 app:contentScrim="?attr/colorPrimaryDark"
                 app:expandedTitleGravity="bottom"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed"
-                app:title="@{repoViewModel.repoOwner.name }"
+                app:title="@{userViewModel.gitHubUser.name }"
                 app:titleEnabled="true">
 
                 <LinearLayout
@@ -49,7 +41,7 @@
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/avatar"
-                        imgSrc="@{repoViewModel.repoOwner.avatarUrl }"
+                        imgSrc="@{userViewModel.gitHubUser.avatarUrl }"
                         android:layout_width="120dp"
                         android:layout_height="120dp"
                         android:layout_gravity="left"
@@ -71,7 +63,7 @@
                             android:paddingLeft="@dimen/half_standard_margin"
                             android:paddingRight="@dimen/double_standard_margin"
                             android:paddingTop="@dimen/half_standard_margin"
-                            android:text="@{repoViewModel.repoOwner.company }"
+                            android:text="@{ userViewModel.gitHubUser.company }"
                             android:textAppearance="?android:attr/textAppearanceSmall"
                             android:textColor="@color/white"
                             android:textStyle="italic" />
@@ -93,7 +85,7 @@
                                 android:paddingRight="@dimen/half_standard_margin"
                                 android:ellipsize="end"
                                 android:maxLines="1"
-                                android:text="@{repoViewModel.repoOwner.htmlUrl }"
+                                android:text="@{userViewModel.gitHubUser.htmlUrl }"
                                 android:textAppearance="?android:attr/textAppearanceSmall"
                                 android:textColor="@color/white"
                                 android:textStyle="italic"
@@ -103,7 +95,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:paddingRight="@dimen/standard_margin"
-                                android:visibility="@{ repoViewModel.repoOwner.htmlUrl != null ? View.VISIBLE : View.GONE }"
+                                android:visibility="@{ userViewModel.gitHubUser.htmlUrl != null ? View.VISIBLE : View.GONE }"
                                 android:src="@drawable/ic_open_in_new_white24dp" />
 
                         </LinearLayout>
@@ -124,29 +116,12 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/pull_to_refresh"
+        <FrameLayout
+            android:id="@+id/list_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-            <android.support.v7.widget.RecyclerView
-                itemShownListener="@{ onItemShownListener }"
-                items="@{ repoViewModel.repositoriesObservable }"
-                onItemSelected="@{ onItemSelectedListener }"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbars="vertical"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-
-        </android.support.v4.widget.SwipeRefreshLayout>
-
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="@{ repoViewModel.isLoading() ? View.VISIBLE : View.GONE }" />
+        </FrameLayout>
 
     </android.support.design.widget.CoordinatorLayout>
 </layout>
