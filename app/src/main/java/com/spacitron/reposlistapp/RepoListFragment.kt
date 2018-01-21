@@ -57,7 +57,7 @@ class RepoListFragment : Fragment() {
                     override fun onPropertyChanged(p0: Observable?, p1: Int) {
                         val i = Intent(Intent.ACTION_VIEW)
                         i.data = Uri.parse(observableRepositorySelection.get().htmlUrl)
-                        startActivity(i)
+                        activity?.startActivity(i)
                     }
                 })
 
