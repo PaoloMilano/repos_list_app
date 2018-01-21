@@ -10,7 +10,7 @@ import io.reactivex.Maybe
 import io.realm.Sort
 
 
-class CachedRepositoryProvider(gitHubServiceProvider: GitHubServiceProvider, private val gitHubUser: String, private val itemsPerPage: Int = 15) {
+open class CachedRepositoryProvider(gitHubServiceProvider: GitHubServiceProvider, private val gitHubUser: String, private val itemsPerPage: Int = 15) {
 
     private var nextPage: Int
     private val gitHubService: GitHubService
@@ -25,7 +25,7 @@ class CachedRepositoryProvider(gitHubServiceProvider: GitHubServiceProvider, pri
         this.errorListener = errorListener
     }
 
-    fun hasNext() = nextPage != -1
+    open fun hasNext() = nextPage != -1
 
     fun getNextReposMaybe(): Maybe<List<Repository>> {
 
@@ -61,12 +61,6 @@ class CachedRepositoryProvider(gitHubServiceProvider: GitHubServiceProvider, pri
             startIndex + itemsPerPage
         } else {
             repos.size
-        }
-
-        nextPage = if (endIndex - startIndex < itemsPerPage) {
-            -1
-        } else {
-            nextPage + 1
         }
 
         if (startIndex < 0 || endIndex < 0) {

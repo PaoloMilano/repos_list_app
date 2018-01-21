@@ -1,8 +1,8 @@
 package com.spacitron.reposlistapp
 
 import com.spacitron.reposlistapp.model.Repository
-import com.spacitron.reposlistapp.reposervice.services.GitHubService
 import com.spacitron.reposlistapp.reposervice.serviceproviders.GitHubServiceProvider
+import com.spacitron.reposlistapp.reposervice.services.GitHubService
 import com.spacitron.reposlistapp.repoviewmodel.CachedRepositoryProvider
 import io.reactivex.Maybe
 import org.junit.Assert.assertFalse
@@ -14,7 +14,7 @@ import org.junit.Test
  *
  * See [testing documentation](http://d.android.com/tools/testing).
  */
-class ExampleUnitTest {
+class RepositoryProviderTest {
 
     @Test
     fun testPaginationEnds() {

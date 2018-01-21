@@ -10,10 +10,11 @@ import com.spacitron.reposlistapp.utils.ItemShownListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
 import retrofit2.HttpException
 import java.net.UnknownHostException
 
-class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedListener<RepositoryModel>, ErrorListener {
+open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedListener<RepositoryModel>, ErrorListener {
 
     enum class DataError {
         NETWORK_ERROR, FORBIDDEN, OTHER
@@ -26,17 +27,29 @@ class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedListener
 
     private val disposable = CompositeDisposable()
     private var repositoryProvider: CachedRepositoryProvider? = null
+    private var itemShownSubject: PublishSubject<Int>? = null
 
 
     fun initialise(repositoryProvider: CachedRepositoryProvider) {
+
         repositoryProvider.setErrorListener(this)
-        isLoading.set(true)
         this.repositoryProvider = repositoryProvider
+
         repositoriesObservable.clear()
+
+        itemShownSubject = PublishSubject.create()
+        itemShownSubject
+                ?.filter { it == repositoriesObservable.size - 4 && repositoryProvider?.hasNext() }
+                ?.distinct()
+                ?.subscribe {
+                    getNextRepositories()
+                }
+
+        isLoading.set(true)
         getNextRepositories()
     }
 
-    private fun getNextRepositories() {
+    protected open fun getNextRepositories() {
         repositoryProvider?.getNextReposMaybe()
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
@@ -77,9 +90,7 @@ class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedListener
 
 
     override fun itemWillBeShown(itemIndex: Int) {
-        if (itemIndex == repositoriesObservable.size - 3 && repositoryProvider?.hasNext() ?: false) {
-            getNextRepositories()
-        }
+        itemShownSubject?.onNext(itemIndex)
     }
 
     override fun itemSelected(item: RepositoryModel) {
