@@ -23,6 +23,7 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
     var repositoriesObservable: ObservableArrayList<RepositoryDisplayModel>? = null
     val isLoading = ObservableBoolean()
     val itemSelected = ObservableField<RepositoryModel>()
+    val repoOwnerName = ObservableField<String>()
     val error = ObservableField<DataError>()
 
     private val disposable = CompositeDisposable()
@@ -31,6 +32,7 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
 
 
     fun initialise(repositoryProvider: CachedRepositoryProvider) {
+        repoOwnerName.set("bmn")
         if(repositoriesObservable == null){
             repositoriesObservable = ObservableArrayList<RepositoryDisplayModel>()
             refresh(repositoryProvider)

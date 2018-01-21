@@ -4,7 +4,6 @@
 
         <import type="android.view.View" />
 
-
         <variable
             name="repoViewModel"
             type="com.spacitron.reposlistapp.repoviewmodel.RepositoryViewModel" />
@@ -18,9 +17,7 @@
             type="com.spacitron.reposlistapp.utils.ItemSelectedListener&lt;com.spacitron.reposlistapp.repoviewmodel.RepositoryModel>" />
     </data>
 
-
-    <android.support.design.widget.CoordinatorLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <android.support.design.widget.CoordinatorLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/root_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -29,25 +26,100 @@
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appbar"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/quadruple_standard_margin"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            android:fitsSystemWindows="true">
+            android:layout_height="200dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
+            <android.support.design.widget.CollapsingToolbarLayout
+                android:id="@+id/collapsing_toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:layout_scrollFlags="scroll|enterAlways"/>
+                android:layout_height="match_parent"
+                app:collapsedTitleGravity="left"
+                app:contentScrim="?attr/colorPrimaryDark"
+                app:expandedTitleGravity="bottom"
+                app:title="@{repoViewModel.repoOwnerName}"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                app:titleEnabled="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorPrimary"
+                    android:orientation="horizontal"
+                    app:layout_collapseMode="parallax">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/avatar"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:scaleType="centerCrop"
+                        android:layout_gravity="left"
+                        android:paddingLeft="@dimen/double_standard_margin"
+                        android:src="@mipmap/ic_launcher" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:padding="@dimen/half_standard_margin"
+                            android:text="Google inc."
+                            android:textColor="@color/white"
+                            android:gravity="center|left"
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:textStyle="italic" />
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:background="@color/colorPrimary"
+                            android:orientation="horizontal"
+                            app:layout_collapseMode="parallax">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:padding="@dimen/half_standard_margin"
+                                android:text="http.llll.com"
+                                android:textColor="@color/white"
+                                android:gravity="center|left"
+                                android:textAppearance="?android:attr/textAppearanceSmall"
+                                android:textStyle="italic" />
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center|left"
+                                android:src="@drawable/ic_open_in_new_24dp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:layout_collapseMode="pin"
+                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+            </android.support.design.widget.CollapsingToolbarLayout>
 
         </android.support.design.widget.AppBarLayout>
-
 
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/pull_to_refresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <android.support.v7.widget.RecyclerView
                 itemShownListener="@{ onItemShownListener }"
@@ -56,7 +128,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scrollbars="vertical"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+
         </android.support.v4.widget.SwipeRefreshLayout>
 
         <ProgressBar
@@ -64,5 +138,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:visibility="@{ repoViewModel.isLoading() ? View.VISIBLE : View.GONE }" />
+
     </android.support.design.widget.CoordinatorLayout>
 </layout>

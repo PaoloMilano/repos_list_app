@@ -54,6 +54,7 @@
                 android:paddingLeft="@dimen/half_standard_margin"
                 android:paddingRight="@dimen/half_standard_margin"
                 android:text="@{ repositoryModel.name }"
+                android:textColor="@color/titleTextColor"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <TextView

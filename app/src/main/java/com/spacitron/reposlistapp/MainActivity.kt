@@ -24,6 +24,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
+        supportActionBar?.title = null
+        collapsing_toolbar.setTitle("title");
+
+
         val repositoryViewModel = ViewModelProviders.of(this).get(RepositoryViewModel::class.java)
         repositoryViewModel.initialise(CachedRepositoryProvider(RetrofitGitHubServiceProvider(), GITHUB_USER_NAME))
 
