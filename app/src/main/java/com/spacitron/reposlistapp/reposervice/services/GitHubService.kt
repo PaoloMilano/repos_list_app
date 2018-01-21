@@ -1,5 +1,6 @@
 package com.spacitron.reposlistapp.reposervice.services
 
+import com.spacitron.reposlistapp.model.GitHubUser
 import com.spacitron.reposlistapp.model.Repository
 import io.reactivex.Single
 import retrofit2.http.GET
@@ -11,5 +12,9 @@ interface GitHubService {
 
     @GET("/users/{user}/repos")
     fun getRepos(@Path("user") user: String, @Query("page") page: Int, @Query("per_page") perPage: Int): Single<List<Repository>>
+
+
+    @GET("/users/{user}")
+    fun getUser(@Path("user") user: String): Single<GitHubUser>
 
 }
