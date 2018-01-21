@@ -10,52 +10,75 @@ import com.spacitron.reposlistapp.utils.ItemShownListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
 import retrofit2.HttpException
 import java.net.UnknownHostException
 
-class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedListener<RepositoryModel>, ErrorListener {
+open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedListener<RepositoryModel>, ErrorListener {
 
     enum class DataError {
         NETWORK_ERROR, FORBIDDEN, OTHER
     }
 
-    val repositoriesObservable = ObservableArrayList<RepositoryDisplayModel>()
+    var repositoriesObservable: ObservableArrayList<RepositoryDisplayModel>? = null
     val isLoading = ObservableBoolean()
     val itemSelected = ObservableField<RepositoryModel>()
     val error = ObservableField<DataError>()
 
     private val disposable = CompositeDisposable()
     private var repositoryProvider: CachedRepositoryProvider? = null
+    private var itemShownSubject: PublishSubject<Int>? = null
 
 
     fun initialise(repositoryProvider: CachedRepositoryProvider) {
+        if(repositoriesObservable == null){
+            repositoriesObservable = ObservableArrayList<RepositoryDisplayModel>()
+            refresh(repositoryProvider)
+        }
+    }
+
+    open fun refresh(repositoryProvider: CachedRepositoryProvider) {
         repositoryProvider.setErrorListener(this)
-        isLoading.set(true)
         this.repositoryProvider = repositoryProvider
-        repositoriesObservable.clear()
+
+        repositoriesObservable?.clear()
+
+        // This will keep track of the pages we requested so we only
+        // make 1 request per scroll event
+        itemShownSubject = PublishSubject.create()
+        itemShownSubject
+                ?.filter {
+                    it == (repositoriesObservable?.size ?:0) - 4 && repositoryProvider?.hasNext()
+                }
+                ?.distinct()
+                ?.subscribe {
+                    getNextRepositories()
+                }
+                ?.let { disposable.add(it) }
+
+        isLoading.set(true)
         getNextRepositories()
     }
 
-    private fun getNextRepositories() {
-        repositoryProvider?.getNextReposMaybe()
+    protected open fun getNextRepositories() {
+        repositoryProvider?.getNextRepos()
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.map {
                     // Map data model to display classes
                     it.map { RepositoryModel(it) }
                 }
-                ?.subscribe {
-                    isLoading.set(false)
-                    repositoriesObservable.addAll(it)
+                ?.subscribe { repoModels, error ->
 
-                    repositoriesObservable.remove(PlaceholderRepositoryModel)
+                    isLoading.set(false)
+                    repositoriesObservable?.addAll(repoModels)
+
+                    repositoriesObservable?.remove(PlaceholderRepositoryModel)
                     if (repositoryProvider?.hasNext() ?: false) {
-                        repositoriesObservable.add(PlaceholderRepositoryModel)
+                        repositoriesObservable?.add(PlaceholderRepositoryModel)
                     }
                 }
-                ?.let {
-                    disposable.add(it)
-                }
+                ?.let { disposable.add(it) }
     }
 
     override fun onError(throwable: Throwable) {
@@ -77,9 +100,7 @@ class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedListener
 
 
     override fun itemWillBeShown(itemIndex: Int) {
-        if (itemIndex == repositoriesObservable.size - 3 && repositoryProvider?.hasNext() ?: false) {
-            getNextRepositories()
-        }
+        itemShownSubject?.onNext(itemIndex)
     }
 
     override fun itemSelected(item: RepositoryModel) {
