@@ -1,11 +1,12 @@
 package com.spacitron.reposlistapp
 
+import com.spacitron.reposlistapp.model.GitHubUser
 import com.spacitron.reposlistapp.model.Repository
 import com.spacitron.reposlistapp.reposervice.serviceproviders.GitHubServiceProvider
 import com.spacitron.reposlistapp.reposervice.services.GitHubService
 import com.spacitron.reposlistapp.repoviewmodel.CachedRepositoryManager
 import com.spacitron.reposlistapp.repoviewmodel.RepositoryDisplayModel
-import com.spacitron.reposlistapp.repoviewmodel.UserViewModel
+import com.spacitron.reposlistapp.repoviewmodel.RepositoryViewModel
 import io.reactivex.Single
 import junit.framework.Assert.assertEquals
 import org.junit.Test
@@ -53,7 +54,7 @@ class RepositoryViewModelTest {
     }
 
 
-    class TestyRepositoryViewModel : UserViewModel() {
+    class TestyRepositoryViewModel : RepositoryViewModel() {
 
         var nextTimesCalled = 0
         var refreshTimesCalled = 0
@@ -77,6 +78,10 @@ class RepositoryViewModelTest {
     class TestyGithubServiceProvider : GitHubServiceProvider {
         override fun getGitHubService(): GitHubService {
             return object: GitHubService {
+                override fun getUser(user: String): Single<GitHubUser> {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
                 override fun getRepos(user: String, page: Int, perPage: Int): Single<List<Repository>> {
                     return Single.never()
                 }

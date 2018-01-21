@@ -5,6 +5,7 @@ import android.databinding.ObservableField
 import com.spacitron.reposlistapp.model.GitHubUser
 import com.spacitron.reposlistapp.reposervice.serviceproviders.GitHubServiceProvider
 import com.vicpin.krealmextensions.queryFirst
+import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
@@ -16,23 +17,34 @@ open class GitHubUserViewModel : ViewModel() {
 
 
     fun initialise(gitHubServiceProvider: GitHubServiceProvider, gitHubUserLogin: String) {
-
-        gitHubServiceProvider.
-                getGitHubService()
-                .getUser(gitHubUserLogin)
+        getUserSingle(gitHubServiceProvider, gitHubUserLogin)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribe { gitUser, error ->
-                    if (gitUser == null) {
-                        val user = GitHubUser().queryFirst { equalTo("login", gitHubUserLogin) }
-                        if (user?.name == null) {
-                            user?.name = gitHubUserLogin
-                        }
-                    } else {
-                        gitHubUser.set(gitUser)
+                .subscribe { gitUser ->
+                    gitHubUser.set(gitUser)
+                }
+                .let { disposable.add(it) }
+    }
+
+    protected open fun getUserSingle(gitHubServiceProvider: GitHubServiceProvider, gitHubUserLogin: String): Single<GitHubUser> {
+
+        return gitHubServiceProvider.
+                getGitHubService()
+                .getUser(gitHubUserLogin)
+                .onErrorReturn {
+                    // Get a user from cache or create a new one on error
+                    val gitUser = getFromCache(gitHubUserLogin) ?: GitHubUser()
+
+                    // If creating a new one set its name to the login string so we can display something to the user
+                    if (gitUser?.name == null) {
+                        gitUser?.name = gitHubUserLogin
                     }
+                    gitUser
                 }
     }
+
+    protected open fun getFromCache(gitHubUserLogin: String): GitHubUser? = GitHubUser().queryFirst { equalTo("login", gitHubUserLogin) }
+
 
     override fun onCleared() {
         super.onCleared()
