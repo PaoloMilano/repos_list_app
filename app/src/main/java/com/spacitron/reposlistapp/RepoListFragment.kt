@@ -69,7 +69,6 @@ class RepoListFragment : Fragment() {
         repoListBinding.onItemShownListener = repositoryViewModel
 
         repoListBinding.getRoot().pull_to_refresh.setOnRefreshListener {
-            repoListBinding.getRoot().pull_to_refresh.isRefreshing = false
             gitHubUserLogin?.let {
                 repositoryViewModel.refresh(CachedRepositoryManager(RetrofitGitHubServiceProvider(), it))
             }
