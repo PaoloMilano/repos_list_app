@@ -6,6 +6,7 @@ import com.spacitron.reposlistapp.reposervice.serviceproviders.GitHubServiceProv
 import com.spacitron.reposlistapp.reposervice.services.GitHubService
 import com.spacitron.reposlistapp.repoviewmodel.CachedRepositoryManager
 import com.spacitron.reposlistapp.repoviewmodel.RepositoryDisplayModel
+import com.spacitron.reposlistapp.repoviewmodel.RepositoryModel
 import com.spacitron.reposlistapp.repoviewmodel.RepositoryViewModel
 import io.reactivex.Single
 import junit.framework.Assert.assertEquals
@@ -59,8 +60,9 @@ class RepositoryViewModelTest {
         var nextTimesCalled = 0
         var refreshTimesCalled = 0
 
-        override fun getNextRepositories() {
+        override fun getNextRepositories(): Single<List<RepositoryModel>>? {
             nextTimesCalled += 1
+            return Single.never()
         }
 
         override fun refresh(repositoryProvider: CachedRepositoryManager) {
