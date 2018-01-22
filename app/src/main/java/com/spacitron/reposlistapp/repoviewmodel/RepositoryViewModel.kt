@@ -7,6 +7,7 @@ import android.databinding.ObservableField
 import com.spacitron.reposlistapp.utils.ErrorListener
 import com.spacitron.reposlistapp.utils.ItemSelectedListener
 import com.spacitron.reposlistapp.utils.ItemShownListener
+import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
@@ -37,10 +38,10 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
     }
 
     open fun refresh(repositoryProvider: CachedRepositoryManager) {
+
         repositoryProvider.setErrorListener(this)
         this.repositoryProvider = repositoryProvider
 
-        repositoriesObservable?.clear()
 
         // This will keep track of the pages we requested so we only
         // make 1 request per scroll event
@@ -57,20 +58,12 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
 
         isLoading.set(true)
         getNextRepositories()
-    }
-
-    protected open fun getNextRepositories() {
-        repositoryProvider?.getNextRepos()
-                ?.subscribeOn(Schedulers.io())
-                ?.observeOn(Schedulers.io())
-                ?.map {
-                    // Map data model to display classes
-                    it.map { RepositoryModel(it) }
-                }
                 ?.subscribe { repoModels, error ->
 
-                    isLoading.set(false)
+                    repositoriesObservable?.clear()
                     repositoriesObservable?.addAll(repoModels)
+
+                    isLoading.set(false)
 
                     repositoriesObservable?.remove(PlaceholderRepositoryModel)
                     if (repositoryProvider?.hasNext() ?: false) {
@@ -78,6 +71,16 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
                     }
                 }
                 ?.let { disposable.add(it) }
+    }
+
+    protected open fun getNextRepositories(): Single<List<RepositoryModel>>? {
+        return repositoryProvider?.getNextRepos()
+                ?.subscribeOn(Schedulers.io())
+                ?.observeOn(Schedulers.io())
+                ?.map {
+                    // Map data model to display classes
+                    it.map { RepositoryModel(it) }
+                }
     }
 
     override fun onError(throwable: Throwable) {
