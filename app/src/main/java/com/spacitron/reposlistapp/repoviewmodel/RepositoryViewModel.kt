@@ -31,7 +31,7 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
 
 
     fun initialise(repositoryProvider: CachedRepositoryManager) {
-        if(repositoriesObservable == null){
+        if (repositoriesObservable == null) {
             repositoriesObservable = ObservableArrayList<RepositoryDisplayModel>()
             refresh(repositoryProvider)
         }
@@ -43,34 +43,38 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
         this.repositoryProvider = repositoryProvider
 
 
+        val subscriptionFunction = {repoModels: List<RepositoryModel>? ->
+
+            repoModels?.let {
+                repositoriesObservable?.addAll(it)
+            }
+
+            repositoriesObservable?.remove(PlaceholderRepositoryModel)
+            if (repositoryProvider?.hasNext()) {
+                repositoriesObservable?.add(PlaceholderRepositoryModel)
+            }
+        }
+
         // This will keep track of the pages we requested so we only
         // make 1 request per scroll event
         itemShownSubject = PublishSubject.create()
         itemShownSubject
                 ?.filter {
-                    it == (repositoriesObservable?.size ?:0) - 4 && repositoryProvider?.hasNext()
+                    it == (repositoriesObservable?.size ?: 0) - 4 && repositoryProvider?.hasNext()
                 }
                 ?.distinct()
-                ?.subscribe {
-                    getNextRepositories()
-                }
+                ?.flatMapSingle { getNextRepositories() }
+                ?.subscribe(subscriptionFunction)
                 ?.let { disposable.add(it) }
+
 
         isLoading.set(true)
         getNextRepositories()
-                ?.subscribe { repoModels, error ->
-
+                ?.doOnEvent{r,t->
                     repositoriesObservable?.clear()
-                    repositoriesObservable?.addAll(repoModels)
-
                     isLoading.set(false)
-
-                    repositoriesObservable?.remove(PlaceholderRepositoryModel)
-                    if (repositoryProvider?.hasNext() ?: false) {
-                        repositoriesObservable?.add(PlaceholderRepositoryModel)
-                    }
                 }
-                ?.let { disposable.add(it) }
+                ?.subscribe(subscriptionFunction)
     }
 
     protected open fun getNextRepositories(): Single<List<RepositoryModel>>? {
@@ -78,7 +82,6 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(Schedulers.io())
                 ?.map {
-                    // Map data model to display classes
                     it.map { RepositoryModel(it) }
                 }
     }
@@ -95,7 +98,7 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
         }
 
         error?.get()?.let {
-            if(it == errorOutput){
+            if (it == errorOutput) {
                 // Force notification or you clients not receive new
                 // errors unless a new exception is thrown
                 error.notifyChange()
@@ -110,8 +113,8 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
     }
 
     override fun itemSelected(item: RepositoryModel) {
-        itemSelected?.get()?.id.let{
-            if(it == item.id){
+        itemSelected?.get()?.id.let {
+            if (it == item.id) {
                 // Force notification or you clients not receive new
                 // errors unless a new exception is thrown
                 itemSelected.notifyChange()
