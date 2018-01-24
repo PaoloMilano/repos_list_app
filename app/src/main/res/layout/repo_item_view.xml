@@ -10,8 +10,8 @@
             type="com.spacitron.reposlistapp.utils.ItemSelectedListener" />
 
         <variable
-            name="repositoryModel"
-            type="com.spacitron.reposlistapp.repoviewmodel.RepositoryModel" />
+            name="repository"
+            type="com.spacitron.reposlistapp.model.Repository" />
 
         <variable
             name="owner"
@@ -43,7 +43,7 @@
                 android:paddingTop="@dimen/half_standard_margin"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_info_outline_black_24dp"
-                android:visibility="@{ repositoryModel.description != null ? View.VISIBLE: View.GONE }" />
+                android:visibility="@{ repository.description != null ? View.VISIBLE: View.GONE }" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -51,7 +51,7 @@
                 android:paddingBottom="@dimen/half_standard_margin"
                 android:paddingLeft="@dimen/half_standard_margin"
                 android:paddingRight="@dimen/half_standard_margin"
-                android:text="@{ repositoryModel.name }"
+                android:text="@{ repository.name }"
                 android:textColor="@color/titleTextColor"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -64,7 +64,7 @@
                 android:paddingLeft="@dimen/half_standard_margin"
                 android:paddingRight="@dimen/half_standard_margin"
                 android:scrollHorizontally="true"
-                android:text="@{ repositoryModel.fullName }"
+                android:text="@{ repository.fullName }"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="italic" />
 
@@ -81,7 +81,7 @@
                     android:paddingBottom="@dimen/half_standard_margin"
                     android:paddingLeft="@dimen/standard_margin"
                     android:paddingRight="@dimen/standard_margin"
-                    android:text="@{ repositoryModel.description }"
+                    android:text="@{ repository.description }"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
 
 
@@ -91,7 +91,7 @@
                     android:orientation="horizontal"
                     android:background="?selectableItemBackground"
                     android:padding="@dimen/standard_margin"
-                    android:onClick="@{()-> onItemSelectedListener.itemSelected(repositoryModel) }">
+                    android:onClick="@{()-> onItemSelectedListener.itemSelected(repository) }">
 
                     <TextView
                         android:layout_width="0dp"
@@ -100,7 +100,7 @@
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:paddingRight="@dimen/half_standard_margin"
-                        android:text="@{ repositoryModel.htmlUrl }"
+                        android:text="@{ repository.htmlUrl }"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textStyle="bold"
                         android:layout_weight="1"/>

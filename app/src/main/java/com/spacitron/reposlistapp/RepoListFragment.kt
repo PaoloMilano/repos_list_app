@@ -17,7 +17,6 @@ import com.spacitron.reposlistapp.databinding.FragmentRepoListBinding
 import com.spacitron.reposlistapp.reposervice.serviceproviders.RetrofitGitHubServiceProvider
 import com.spacitron.reposlistapp.repoviewmodel.CachedRepositoryManager
 import com.spacitron.reposlistapp.repoviewmodel.RepositoryViewModel
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_repo_list.view.*
 
 class RepoListFragment : Fragment() {
@@ -85,7 +84,7 @@ class RepoListFragment : Fragment() {
                             RepositoryViewModel.DataError.OTHER -> getString(R.string.error_other)
                         }
 
-                        Snackbar.make(root_view, errorString, Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(repoListBinding.root, errorString, Snackbar.LENGTH_SHORT).show()
                     }
                 })
 

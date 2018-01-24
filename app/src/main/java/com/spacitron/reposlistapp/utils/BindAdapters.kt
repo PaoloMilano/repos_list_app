@@ -5,8 +5,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.widget.ImageView
 import com.spacitron.reposlistapp.ReposRecyclerViewAdapter
-import com.spacitron.reposlistapp.repoviewmodel.RepositoryDisplayModel
-import com.spacitron.reposlistapp.repoviewmodel.RepositoryModel
+import com.spacitron.reposlistapp.model.Repository
 import com.squareup.picasso.Picasso
 
 @BindingAdapter("imgSrc")
@@ -25,8 +24,17 @@ fun bindOnItemShownListener(view: RecyclerView, onItemShownListener: ItemShownLi
     })
 }
 
+@BindingAdapter("hasNext")
+fun bindRecyclerViewHasNext(view: RecyclerView, hasNext: Boolean) {
+    val adapter = view.adapter
+    if (adapter is ReposRecyclerViewAdapter) {
+        adapter.hasNext = hasNext
+    }
+}
+
+
 @BindingAdapter("onItemSelected")
-fun bindOnItemSelectedListener(view: RecyclerView, onItemSelectedListener: ItemSelectedListener<RepositoryModel>) {
+fun bindOnItemSelectedListener(view: RecyclerView, onItemSelectedListener: ItemSelectedListener<Repository>) {
     val adapter = view.adapter
     if (adapter is ReposRecyclerViewAdapter) {
         adapter.setItemSelectedListener(onItemSelectedListener)
@@ -34,7 +42,7 @@ fun bindOnItemSelectedListener(view: RecyclerView, onItemSelectedListener: ItemS
 }
 
 @BindingAdapter("items")
-fun bindList(view: RecyclerView, list: List<RepositoryDisplayModel>?) {
+fun bindList(view: RecyclerView, list: List<Repository>?) {
     if (view.adapter == null) {
         val layoutManager = LinearLayoutManager(view.context)
         view.layoutManager = layoutManager

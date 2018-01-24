@@ -5,8 +5,6 @@ import com.spacitron.reposlistapp.model.Repository
 import com.spacitron.reposlistapp.reposervice.serviceproviders.GitHubServiceProvider
 import com.spacitron.reposlistapp.reposervice.services.GitHubService
 import com.spacitron.reposlistapp.repoviewmodel.CachedRepositoryManager
-import com.spacitron.reposlistapp.repoviewmodel.RepositoryDisplayModel
-import com.spacitron.reposlistapp.repoviewmodel.RepositoryModel
 import com.spacitron.reposlistapp.repoviewmodel.RepositoryViewModel
 import io.reactivex.Single
 import junit.framework.Assert.assertEquals
@@ -23,7 +21,7 @@ class RepositoryViewModelTest {
 
         // Add enough elements to trigger a next page request
         for (i in 1..5) {
-            repositoryViewModel.repositoriesObservable?.add(RepositoryDisplayModel())
+            repositoryViewModel.repositoriesObservable?.add(Repository())
         }
 
         // Simulate scrolling through the list a few times
@@ -60,7 +58,7 @@ class RepositoryViewModelTest {
         var nextTimesCalled = 0
         var refreshTimesCalled = 0
 
-        override fun getNextRepositories(): Single<List<RepositoryModel>>? {
+        override fun getNextRepositories(): Single<List<Repository>?>? {
             nextTimesCalled += 1
             return Single.never()
         }
@@ -80,11 +78,11 @@ class RepositoryViewModelTest {
     class TestyGithubServiceProvider : GitHubServiceProvider {
         override fun getGitHubService(): GitHubService {
             return object: GitHubService {
-                override fun getUser(user: String): Single<GitHubUser> {
+                override fun getUser(user: String): Single<GitHubUser?> {
                     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 }
 
-                override fun getRepos(user: String, page: Int, perPage: Int): Single<List<Repository>> {
+                override fun getRepos(user: String, page: Int, perPage: Int): Single<List<Repository>?> {
                     return Single.never()
                 }
             }

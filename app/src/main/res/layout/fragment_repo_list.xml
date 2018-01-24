@@ -15,7 +15,7 @@
 
         <variable
             name="onItemSelectedListener"
-            type="com.spacitron.reposlistapp.utils.ItemSelectedListener&lt;com.spacitron.reposlistapp.repoviewmodel.RepositoryModel>" />
+            type="com.spacitron.reposlistapp.utils.ItemSelectedListener&lt;com.spacitron.reposlistapp.model.Repository>" />
     </data>
 
     <android.support.v4.widget.SwipeRefreshLayout
@@ -29,6 +29,7 @@
             itemShownListener="@{ onItemShownListener }"
             items="@{ repoViewModel.repositoriesObservable }"
             onItemSelected="@{ onItemSelectedListener }"
+            hasNext="@{ repoViewModel.hasNext }"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="vertical"

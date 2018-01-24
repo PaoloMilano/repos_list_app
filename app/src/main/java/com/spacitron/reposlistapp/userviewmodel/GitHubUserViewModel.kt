@@ -26,7 +26,7 @@ open class GitHubUserViewModel : ViewModel() {
                 .let { disposable.add(it) }
     }
 
-    protected open fun getUserSingle(gitHubServiceProvider: GitHubServiceProvider, gitHubUserLogin: String): Single<GitHubUser> {
+    protected open fun getUserSingle(gitHubServiceProvider: GitHubServiceProvider, gitHubUserLogin: String): Single<GitHubUser?> {
 
         return gitHubServiceProvider.
                 getGitHubService()
