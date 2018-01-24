@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,7 +41,6 @@ class RepoListFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-
         val repositoryViewModel = ViewModelProviders.of(activity as FragmentActivity).get(RepositoryViewModel::class.java)
 
 
@@ -66,6 +66,12 @@ class RepoListFragment : Fragment() {
         repoListBinding.repoViewModel = repositoryViewModel
         repoListBinding.onItemSelectedListener = repositoryViewModel
         repoListBinding.onItemShownListener = repositoryViewModel
+
+
+        val layoutManager = LinearLayoutManager(context)
+        repoListBinding.getRoot().recycler_view.layoutManager = layoutManager
+        repoListBinding.getRoot().recycler_view.adapter = ReposRecyclerViewAdapter()
+
 
         repoListBinding.getRoot().pull_to_refresh.setOnRefreshListener {
             gitHubUserLogin?.let {

@@ -8,58 +8,43 @@ import android.view.View
 import android.view.ViewGroup
 import com.spacitron.reposlistapp.databinding.RepoItemViewBinding
 import com.spacitron.reposlistapp.model.Repository
-import com.spacitron.reposlistapp.utils.ItemSelectedListener
 import com.spacitron.reposlistapp.utils.collapse
+import com.spacitron.reposlistapp.utils.custombindings.BoundPagedRecyclerViewAdapter
 import com.spacitron.reposlistapp.utils.expand
 import kotlinx.android.synthetic.main.repo_item_view.view.*
-import java.util.*
 
 
-class ReposRecyclerViewAdapter : RecyclerView.Adapter< RecyclerView.ViewHolder>() {
+class ReposRecyclerViewAdapter : BoundPagedRecyclerViewAdapter<Repository, RecyclerView.ViewHolder>() {
 
     private val REPO_VIEW_TYPE = 0
     private val PLACEHOLDER_VIEW_TYPE = 1
 
-    private var itemSelectedListener: ItemSelectedListener<Repository>? = null
-
-    private val repositories: MutableList<Repository>
-
-
-    var hasNext = false
-    set(value) {
-        field = value
-        notifyItemChanged(itemCount)
-    }
-
-    init {
-        repositories = ArrayList<Repository>()
-    }
+    override var hasNext: Boolean
+        get() = super.hasNext
+        set(value) {
+            super.hasNext = value
+            notifyItemChanged(itemCount)
+        }
 
     override fun getItemCount(): Int {
         return if(hasNext) {
-            repositories.size + 1
+            itemList.size + 1
         }else{
-            repositories.size
+            itemList.size
         }
     }
 
-
-    fun setItems(repositories: List<Repository>) {
-        this.repositories.clear()
-        this.repositories.addAll(repositories)
-        notifyDataSetChanged()
-    }
-
-    fun setItemSelectedListener(itemSelectedListener: ItemSelectedListener<Repository>){
-        this.itemSelectedListener = itemSelectedListener
-    }
-
     override fun getItemViewType(position: Int): Int {
-        return if (position >= repositories.size){
+        return if (position >= itemList.size){
             PLACEHOLDER_VIEW_TYPE
         }else{
             REPO_VIEW_TYPE
         }
+    }
+
+    override fun setItems(items: List<Repository>) {
+        super.setItems(items)
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -75,7 +60,9 @@ class ReposRecyclerViewAdapter : RecyclerView.Adapter< RecyclerView.ViewHolder>(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is RepoViewHolder) {
-            holder.bind(repositories[position])
+            getItem(position)?.let {
+                holder.bind(it)
+            }
         }
     }
 
