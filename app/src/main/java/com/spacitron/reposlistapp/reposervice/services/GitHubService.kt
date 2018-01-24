@@ -11,10 +11,10 @@ import retrofit2.http.Query
 interface GitHubService {
 
     @GET("/users/{user}/repos")
-    fun getRepos(@Path("user") user: String, @Query("page") page: Int, @Query("per_page") perPage: Int): Single<List<Repository>>
+    fun getRepos(@Path("user") user: String, @Query("page") page: Int, @Query("per_page") perPage: Int): Single<List<Repository>?>
 
 
     @GET("/users/{user}")
-    fun getUser(@Path("user") user: String): Single<GitHubUser>
+    fun getUser(@Path("user") user: String): Single<GitHubUser?>
 
 }

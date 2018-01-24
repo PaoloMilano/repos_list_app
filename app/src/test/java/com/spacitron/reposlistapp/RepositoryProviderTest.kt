@@ -25,11 +25,11 @@ class RepositoryProviderTest {
 
                 return object : GitHubService {
 
-                    override fun getUser(user: String): Single<GitHubUser> {
+                    override fun getUser(user: String): Single<GitHubUser?> {
                         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                     }
 
-                    override fun getRepos(user: String, page: Int, perPage: Int): Single<List<Repository>> {
+                    override fun getRepos(user: String, page: Int, perPage: Int): Single<List<Repository>?> {
 
                         return Single.just(listOf(Repository()))
 
@@ -54,11 +54,11 @@ class RepositoryProviderTest {
 
                 return object : GitHubService {
 
-                    override fun getUser(user: String): Single<GitHubUser> {
+                    override fun getUser(user: String): Single<GitHubUser?> {
                         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                     }
 
-                    override fun getRepos(user: String, page: Int, perPage: Int): Single<List<Repository>> {
+                    override fun getRepos(user: String, page: Int, perPage: Int): Single<List<Repository>?> {
 
                         return Single.just(listOf(Repository(),Repository()))
 
@@ -82,11 +82,11 @@ class RepositoryProviderTest {
             override fun getGitHubService(): GitHubService {
                 return object : GitHubService {
 
-                    override fun getUser(user: String): Single<GitHubUser> {
+                    override fun getUser(user: String): Single<GitHubUser?> {
                         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                     }
 
-                    override fun getRepos(user: String, page: Int, perPage: Int): Single<List<Repository>> {
+                    override fun getRepos(user: String, page: Int, perPage: Int): Single<List<Repository>?> {
                         return Single.error(Exception())
                     }
                 }

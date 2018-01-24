@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModel
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
+import com.spacitron.reposlistapp.model.Repository
 import com.spacitron.reposlistapp.utils.ErrorListener
 import com.spacitron.reposlistapp.utils.ItemSelectedListener
 import com.spacitron.reposlistapp.utils.ItemShownListener
@@ -14,15 +15,16 @@ import io.reactivex.subjects.PublishSubject
 import retrofit2.HttpException
 import java.net.UnknownHostException
 
-open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedListener<RepositoryModel>, ErrorListener {
+open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedListener<Repository>, ErrorListener {
 
     enum class DataError {
         NETWORK_ERROR, FORBIDDEN, OTHER
     }
 
-    var repositoriesObservable: ObservableArrayList<RepositoryDisplayModel>? = null
+    var repositoriesObservable: ObservableArrayList<Repository>? = null
     val isLoading = ObservableBoolean()
-    val itemSelected = ObservableField<RepositoryModel>()
+    val hasNext = ObservableBoolean()
+    val itemSelected = ObservableField<Repository>()
     val error = ObservableField<DataError>()
 
     private val disposable = CompositeDisposable()
@@ -32,7 +34,7 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
 
     fun initialise(repositoryProvider: CachedRepositoryManager) {
         if (repositoriesObservable == null) {
-            repositoriesObservable = ObservableArrayList<RepositoryDisplayModel>()
+            repositoriesObservable = ObservableArrayList<Repository>()
             refresh(repositoryProvider)
         }
     }
@@ -43,16 +45,13 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
         this.repositoryProvider = repositoryProvider
 
 
-        val subscriptionFunction = {repoModels: List<RepositoryModel>? ->
+        val subscriptionFunction = {repoModels: List<Repository>? ->
 
             repoModels?.let {
                 repositoriesObservable?.addAll(it)
             }
 
-            repositoriesObservable?.remove(PlaceholderRepositoryModel)
-            if (repositoryProvider?.hasNext()) {
-                repositoriesObservable?.add(PlaceholderRepositoryModel)
-            }
+            hasNext.set(repositoryProvider.hasNext())
         }
 
         // This will keep track of the pages we requested so we only
@@ -77,14 +76,12 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
                 ?.subscribe(subscriptionFunction)
     }
 
-    protected open fun getNextRepositories(): Single<List<RepositoryModel>>? {
+    protected open fun getNextRepositories(): Single<List<Repository>?>? {
         return repositoryProvider?.getNextRepos()
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(Schedulers.io())
-                ?.map {
-                    it.map { RepositoryModel(it) }
-                }
     }
+
 
     override fun onError(throwable: Throwable) {
         val errorOutput = when (throwable) {
@@ -112,7 +109,7 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
         itemShownSubject?.onNext(itemIndex)
     }
 
-    override fun itemSelected(item: RepositoryModel) {
+    override fun itemSelected(item: Repository) {
         itemSelected?.get()?.id.let {
             if (it == item.id) {
                 // Force notification or you clients not receive new

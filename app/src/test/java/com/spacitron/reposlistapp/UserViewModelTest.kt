@@ -23,11 +23,11 @@ class UserViewModelTest {
             override fun getGitHubService(): GitHubService {
                 return object : GitHubService{
 
-                    override fun getUser(user: String): Single<GitHubUser> {
+                    override fun getUser(user: String): Single<GitHubUser?> {
                         return Single.error(Exception())
                     }
 
-                    override fun getRepos(user: String, page: Int, perPage: Int): Single<List<Repository>> {
+                    override fun getRepos(user: String, page: Int, perPage: Int): Single<List<Repository>?> {
                         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                     }
 
@@ -37,12 +37,12 @@ class UserViewModelTest {
         }, testName).subscribe{ gituser->
             // In case of error we set the user's name to the login string we initially passed
             // that way the client will have something somwhat relevant to show the user
-            Assert.assertEquals(testName, gituser.name)
+            Assert.assertEquals(testName, gituser?.name)
         }
     }
 
     class TestyGitHubUserViewModel: GitHubUserViewModel(){
-        override public fun getUserSingle(gitHubServiceProvider: GitHubServiceProvider, gitHubUserLogin: String): Single<GitHubUser> {
+        override public fun getUserSingle(gitHubServiceProvider: GitHubServiceProvider, gitHubUserLogin: String): Single<GitHubUser?> {
             return super.getUserSingle(gitHubServiceProvider, gitHubUserLogin)
         }
 

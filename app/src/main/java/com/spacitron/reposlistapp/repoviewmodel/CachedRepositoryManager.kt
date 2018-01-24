@@ -28,7 +28,7 @@ open class CachedRepositoryManager(gitHubServiceProvider: GitHubServiceProvider,
 
     open fun hasNext() = nextPage != -1
 
-    fun getNextRepos(): Single<List<Repository>> {
+    fun getNextRepos(): Single<List<Repository>?> {
 
         if (nextPage == -1) {
             return Single.never()
@@ -36,7 +36,9 @@ open class CachedRepositoryManager(gitHubServiceProvider: GitHubServiceProvider,
 
         return gitHubService.getRepos(gitHubUser, nextPage, itemsPerPage)
                 .doOnEvent { repos, error ->
-                    saveReposToCache(repos)
+                    repos?.let {
+                        saveReposToCache(it)
+                    }
                 }
                 .onErrorReturn {
                     errorListener?.onError(it)
