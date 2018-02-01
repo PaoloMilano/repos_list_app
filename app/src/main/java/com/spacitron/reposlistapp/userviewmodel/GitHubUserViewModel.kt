@@ -18,8 +18,6 @@ open class GitHubUserViewModel : ViewModel() {
 
     fun initialise(gitHubServiceProvider: GitHubServiceProvider, gitHubUserLogin: String) {
         getUserSingle(gitHubServiceProvider, gitHubUserLogin)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
                 .subscribe { gitUser ->
                     gitHubUser.set(gitUser)
                 }

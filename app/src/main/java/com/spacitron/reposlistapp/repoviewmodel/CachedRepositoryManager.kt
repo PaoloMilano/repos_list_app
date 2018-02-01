@@ -28,7 +28,7 @@ open class CachedRepositoryManager(gitHubServiceProvider: GitHubServiceProvider,
 
     open fun hasNext() = nextPage != -1
 
-    fun getNextRepos(): Single<List<Repository>?> {
+    open fun getNextRepos(): Single<List<Repository>?> {
 
         if (nextPage == -1) {
             return Single.never()

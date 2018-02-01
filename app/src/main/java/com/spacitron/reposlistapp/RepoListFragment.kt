@@ -46,7 +46,7 @@ class RepoListFragment : Fragment() {
 
         val gitHubUserLogin = arguments?.getString(GITHUB_LOGIN_KEY)
         gitHubUserLogin?.let {
-            repositoryViewModel.initialise(CachedRepositoryManager(RetrofitGitHubServiceProvider(), it))
+            repositoryViewModel.initialise(CachedRepositoryManager(RetrofitGitHubServiceProvider, it))
         }
 
 
@@ -75,7 +75,7 @@ class RepoListFragment : Fragment() {
 
         repoListBinding.getRoot().pull_to_refresh.setOnRefreshListener {
             gitHubUserLogin?.let {
-                repositoryViewModel.refresh(CachedRepositoryManager(RetrofitGitHubServiceProvider(), it))
+                repositoryViewModel.refresh(CachedRepositoryManager(RetrofitGitHubServiceProvider, it))
             }
         }
 

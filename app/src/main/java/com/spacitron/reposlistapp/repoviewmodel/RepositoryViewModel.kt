@@ -8,9 +8,7 @@ import com.spacitron.reposlistapp.model.Repository
 import com.spacitron.reposlistapp.utils.ErrorListener
 import com.spacitron.reposlistapp.utils.ItemSelectedListener
 import com.spacitron.reposlistapp.utils.ItemShownListener
-import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import retrofit2.HttpException
 import java.net.UnknownHostException
@@ -59,29 +57,23 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
         itemShownSubject = PublishSubject.create()
         itemShownSubject
                 ?.filter {
-                    it == (repositoriesObservable?.size ?: 0) - 3 && repositoryProvider?.hasNext()
+                    it >= (repositoriesObservable?.size ?: 0) - 3 && repositoryProvider?.hasNext()
                 }
+                ?.map { (repositoriesObservable?.size ?: 0) - 3 }
                 ?.distinct()
-                ?.flatMapSingle { getNextRepositories() }
+                ?.flatMapSingle { repositoryProvider?.getNextRepos() }
                 ?.subscribe(subscriptionFunction)
                 ?.let { disposable.add(it) }
 
 
         isLoading.set(true)
-        getNextRepositories()
+        repositoryProvider?.getNextRepos()
                 ?.doOnEvent{r,t->
                     repositoriesObservable?.clear()
                     isLoading.set(false)
                 }
                 ?.subscribe(subscriptionFunction)
     }
-
-    protected open fun getNextRepositories(): Single<List<Repository>?>? {
-        return repositoryProvider?.getNextRepos()
-                ?.subscribeOn(Schedulers.io())
-                ?.observeOn(Schedulers.io())
-    }
-
 
     override fun onError(throwable: Throwable) {
         val errorOutput = when (throwable) {
