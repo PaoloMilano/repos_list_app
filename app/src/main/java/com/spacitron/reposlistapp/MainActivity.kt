@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
 
         val userViewModel = ViewModelProviders.of(this).get(GitHubUserViewModel::class.java)
 
-        val retroFitProvider = RetrofitGitHubServiceProvider()
+        val retroFitProvider = RetrofitGitHubServiceProvider
         userViewModel.initialise(retroFitProvider, GITHUB_USER_NAME)
 
         val binding: ActivityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)

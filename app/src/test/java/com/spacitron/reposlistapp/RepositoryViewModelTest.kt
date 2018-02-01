@@ -16,8 +16,10 @@ class RepositoryViewModelTest {
     @Test
     fun testPageOnlyCalledOnce() {
 
+        val testyRepositoryServiceProvider = TestyRepositoryProvider(TestyGithubServiceProvider(), "")
+
         val repositoryViewModel = TestyRepositoryViewModel()
-        repositoryViewModel.initialise(TestyRepositoryProvider(TestyGithubServiceProvider(), ""))
+        repositoryViewModel.initialise(testyRepositoryServiceProvider)
 
         // Add enough elements to trigger a next page request
         for (i in 1..5) {
@@ -33,7 +35,41 @@ class RepositoryViewModelTest {
 
         // Only two page requests should have taken place, one when
         // initialised and one for requesting the next page
-        assertEquals(2, repositoryViewModel.nextTimesCalled)
+        assertEquals(2, testyRepositoryServiceProvider.getNextReposTimesCalled)
+    }
+
+   @Test
+    fun testPageCalledEvenWithSkippedItems() {
+
+       // Sometimes the scroll listener does not receive events for every single item
+       // being shown. The view model should be able to hanbdle this.
+        val testyRepositoryServiceProvider = TestyRepositoryProvider(TestyGithubServiceProvider(), "")
+
+        val repositoryViewModel = TestyRepositoryViewModel()
+        repositoryViewModel.initialise(testyRepositoryServiceProvider)
+
+        // Add enough elements to trigger a next page request
+        for (i in 1..5) {
+            repositoryViewModel.repositoriesObservable?.add(Repository())
+        }
+
+       //Immediately signal that the last item was shown
+       repositoryViewModel.itemWillBeShown(5)
+
+       // The viewmodel should have asked for a new page even though we didn't hit the n-3 element
+       assertEquals(2, testyRepositoryServiceProvider.getNextReposTimesCalled)
+
+
+       // Now scroll from top to bottom
+        for (i in 1..5) {
+            for (j in 1..5) {
+                repositoryViewModel.itemWillBeShown(j)
+            }
+        }
+
+       // The viewmodel should have not asked for a new page in response to scrolling the same list twice
+       assertEquals(2, testyRepositoryServiceProvider.getNextReposTimesCalled)
+
     }
 
 
@@ -55,13 +91,7 @@ class RepositoryViewModelTest {
 
     class TestyRepositoryViewModel : RepositoryViewModel() {
 
-        var nextTimesCalled = 0
         var refreshTimesCalled = 0
-
-        override fun getNextRepositories(): Single<List<Repository>?>? {
-            nextTimesCalled += 1
-            return Single.never()
-        }
 
         override fun refresh(repositoryProvider: CachedRepositoryManager) {
             super.refresh(repositoryProvider)
@@ -70,6 +100,14 @@ class RepositoryViewModelTest {
     }
 
     class TestyRepositoryProvider(gitHubServiceProvider: GitHubServiceProvider, gitHubUser: String) : CachedRepositoryManager(gitHubServiceProvider, gitHubUser) {
+
+        var getNextReposTimesCalled = 0
+
+        override fun getNextRepos(): Single<List<Repository>?> {
+            getNextReposTimesCalled+=1
+            return super.getNextRepos()
+        }
+
         override fun hasNext(): Boolean {
             return true
         }
