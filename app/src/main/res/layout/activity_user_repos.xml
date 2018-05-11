@@ -3,12 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <import type="android.view.View" />
-
         <variable
             name="userViewModel"
-            type="com.spacitron.reposlistapp.userviewmodel.GitHubUserViewModel" />
+            type="com.spacitron.reposlistapp.userrepos.userviewmodel.GitHubUserViewModel" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout

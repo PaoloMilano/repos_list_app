@@ -1,4 +1,4 @@
-package com.spacitron.reposlistapp
+package com.spacitron.reposlistapp.userrepos
 
 
 import android.arch.lifecycle.ViewModelProviders
@@ -14,10 +14,11 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.spacitron.reposlistapp.R
 import com.spacitron.reposlistapp.databinding.FragmentRepoListBinding
 import com.spacitron.reposlistapp.reposervice.serviceproviders.RetrofitGitHubServiceProvider
-import com.spacitron.reposlistapp.repoviewmodel.CachedRepositoryManager
-import com.spacitron.reposlistapp.repoviewmodel.RepositoryViewModel
+import com.spacitron.reposlistapp.userrepos.repoviewmodel.CachedRepositoryManager
+import com.spacitron.reposlistapp.userrepos.repoviewmodel.RepositoryViewModel
 import kotlinx.android.synthetic.main.fragment_repo_list.view.*
 
 class RepoListFragment : Fragment() {

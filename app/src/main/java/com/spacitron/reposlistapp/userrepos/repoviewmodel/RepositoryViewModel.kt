@@ -1,4 +1,4 @@
-package com.spacitron.reposlistapp.repoviewmodel
+package com.spacitron.reposlistapp.userrepos.repoviewmodel
 
 import android.arch.lifecycle.ViewModel
 import android.databinding.ObservableArrayList
@@ -57,18 +57,18 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
         itemShownSubject = PublishSubject.create()
         itemShownSubject
                 ?.filter {
-                    it >= (repositoriesObservable?.size ?: 0) - 3 && repositoryProvider?.hasNext()
+                    it >= (repositoriesObservable?.size ?: 0) - 3 && repositoryProvider.hasNext()
                 }
                 ?.map { (repositoriesObservable?.size ?: 0) - 3 }
                 ?.distinct()
-                ?.flatMapSingle { repositoryProvider?.getNextRepos() }
+                ?.flatMapSingle { repositoryProvider.getNextRepos() }
                 ?.subscribe(subscriptionFunction)
                 ?.let { disposable.add(it) }
 
 
         isLoading.set(true)
-        repositoryProvider?.getNextRepos()
-                ?.doOnEvent{r,t->
+        repositoryProvider.getNextRepos()
+                .doOnEvent{_,_->
                     repositoriesObservable?.clear()
                     isLoading.set(false)
                 }
@@ -86,7 +86,7 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
             else -> DataError.OTHER
         }
 
-        error?.get()?.let {
+        error.get()?.let {
             if (it == errorOutput) {
                 // Force notification or you clients not receive new
                 // errors unless a new exception is thrown
@@ -102,7 +102,7 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
     }
 
     override fun itemSelected(item: Repository) {
-        itemSelected?.get()?.id.let {
+        itemSelected.get()?.id.let {
             if (it == item.id) {
                 // Force notification or you clients not receive new
                 // errors unless a new exception is thrown

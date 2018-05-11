@@ -1,4 +1,4 @@
-package com.spacitron.reposlistapp.repoviewmodel
+package com.spacitron.reposlistapp.userrepos.repoviewmodel
 
 import com.spacitron.reposlistapp.model.Repository
 import com.spacitron.reposlistapp.reposervice.serviceproviders.GitHubServiceProvider
@@ -35,7 +35,7 @@ open class CachedRepositoryManager(gitHubServiceProvider: GitHubServiceProvider,
         }
 
         return gitHubService.getRepos(gitHubUser, nextPage, itemsPerPage)
-                .doOnEvent { repos, error ->
+                .doOnEvent { repos, _ ->
                     repos?.let {
                         saveReposToCache(it)
                     }
@@ -44,7 +44,7 @@ open class CachedRepositoryManager(gitHubServiceProvider: GitHubServiceProvider,
                     errorListener?.onError(it)
                     getFromCache()
                 }
-                .doOnEvent{ repos, error ->
+                .doOnEvent{ repos, _ ->
                     nextPage = if (repos != null && repos?.size < itemsPerPage) {
                         -1
                     } else {
@@ -58,7 +58,7 @@ open class CachedRepositoryManager(gitHubServiceProvider: GitHubServiceProvider,
 
         // To keep the cache clean and up to date just delete all items
         // when we can successfully start fetching the list from the first page
-        if (nextPage == 1 && repos != null) {
+        if (nextPage == 1) {
             Repository().deleteAll()
         }
         repos?.saveAll()

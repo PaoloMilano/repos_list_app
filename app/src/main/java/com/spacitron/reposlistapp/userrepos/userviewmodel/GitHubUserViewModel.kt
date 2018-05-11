@@ -1,4 +1,4 @@
-package com.spacitron.reposlistapp.userviewmodel
+package com.spacitron.reposlistapp.userrepos.userviewmodel
 
 import android.arch.lifecycle.ViewModel
 import android.databinding.ObservableField
@@ -7,7 +7,6 @@ import com.spacitron.reposlistapp.reposervice.serviceproviders.GitHubServiceProv
 import com.vicpin.krealmextensions.queryFirst
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 
 open class GitHubUserViewModel : ViewModel() {
 
@@ -34,8 +33,8 @@ open class GitHubUserViewModel : ViewModel() {
                     val gitUser = getFromCache(gitHubUserLogin) ?: GitHubUser()
 
                     // If creating a new one set its name to the login string so we can display something to the user
-                    if (gitUser?.name == null) {
-                        gitUser?.name = gitHubUserLogin
+                    if (gitUser.name == null) {
+                        gitUser.name = gitHubUserLogin
                     }
                     gitUser
                 }

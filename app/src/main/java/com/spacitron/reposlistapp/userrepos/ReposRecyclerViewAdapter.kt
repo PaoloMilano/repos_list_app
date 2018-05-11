@@ -1,4 +1,4 @@
-package com.spacitron.reposlistapp
+package com.spacitron.reposlistapp.userrepos
 
 
 import android.databinding.DataBindingUtil
@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.spacitron.reposlistapp.R
 import com.spacitron.reposlistapp.databinding.RepoItemViewBinding
 import com.spacitron.reposlistapp.model.Repository
 import com.spacitron.reposlistapp.utils.collapse

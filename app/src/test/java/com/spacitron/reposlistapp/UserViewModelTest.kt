@@ -4,7 +4,7 @@ import com.spacitron.reposlistapp.model.GitHubUser
 import com.spacitron.reposlistapp.model.Repository
 import com.spacitron.reposlistapp.reposervice.serviceproviders.GitHubServiceProvider
 import com.spacitron.reposlistapp.reposervice.services.GitHubService
-import com.spacitron.reposlistapp.userviewmodel.GitHubUserViewModel
+import com.spacitron.reposlistapp.userrepos.userviewmodel.GitHubUserViewModel
 import io.reactivex.Single
 import junit.framework.Assert
 import org.junit.Test
