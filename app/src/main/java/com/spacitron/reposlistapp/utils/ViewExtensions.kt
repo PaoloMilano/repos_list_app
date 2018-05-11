@@ -5,14 +5,19 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.Transformation
 
-fun View.expand(animationListener: AnimationEndedListener? = null) {
-    measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-    expand(animationListener, measuredHeight)
+enum class AnimationStatus {
+    COMPLETED, REPEAT, START
 }
 
-fun View.expand(animationListener: AnimationEndedListener?, targetHeight: Int) {
+fun View.expand(animationListener: ((status: AnimationStatus)->Unit)? = null) {
+    measure(layoutParams.width, layoutParams.height)
+    expand(measuredHeight, animationListener)
+}
+
+
+fun View.expand(targetHeight: Int, animationListener: ((status: AnimationStatus)->Unit)?) {
     // Older versions of android (pre API 21) cancel animations for views with a height of 0.
-    layoutParams.height = 1
+    layoutParams.height = 0
     visibility = View.VISIBLE
     val a = object : Animation() {
         override fun applyTransformation(interpolatedTime: Float, t: Transformation) {
@@ -27,20 +32,7 @@ fun View.expand(animationListener: AnimationEndedListener?, targetHeight: Int) {
         }
     }
 
-    a.setAnimationListener(object : Animation.AnimationListener {
-        override fun onAnimationRepeat(animation: Animation?) {
-            animationListener?.animationStatus(AnimationEndedListener.AnimationStatus.REPEAT)
-        }
-
-        override fun onAnimationEnd(animation: Animation?) {
-            animationListener?.animationStatus(AnimationEndedListener.AnimationStatus.COMPLETED)
-        }
-
-        override fun onAnimationStart(animation: Animation?) {
-            animationListener?.animationStatus(AnimationEndedListener.AnimationStatus.START)
-        }
-
-    })
+    animationListener?.let { handleAnimationListener(a, it) }
 
     // 1dp/ms
     a.duration = (targetHeight / context.resources.displayMetrics.density).toInt().toLong()
@@ -48,7 +40,7 @@ fun View.expand(animationListener: AnimationEndedListener?, targetHeight: Int) {
 }
 
 
-fun View.collapse() {
+fun View.collapse(animationListener: ((status: AnimationStatus)->Unit)? = null) {
 
     val a = object : Animation() {
         override fun applyTransformation(interpolatedTime: Float, t: Transformation) {
@@ -64,18 +56,26 @@ fun View.collapse() {
             return true
         }
     }
+    animationListener?.let { handleAnimationListener(a, it) }
 
     // 1dp/ms
     a.duration = (measuredHeight / context.resources.displayMetrics.density).toInt().toLong()
     startAnimation(a)
-
 }
 
 
-interface AnimationEndedListener {
-    enum class AnimationStatus {
-        COMPLETED, REPEAT, START
-    }
+private fun handleAnimationListener(a: Animation, animationListener: ((status: AnimationStatus)->Unit)){
+    a.setAnimationListener(object : Animation.AnimationListener {
+        override fun onAnimationRepeat(animation: Animation?) {
+            animationListener(AnimationStatus.REPEAT)
+        }
 
-    fun animationStatus(status: AnimationStatus);
+        override fun onAnimationEnd(animation: Animation?) {
+            animationListener(AnimationStatus.COMPLETED)
+        }
+
+        override fun onAnimationStart(animation: Animation?) {
+            animationListener(AnimationStatus.START)
+        }
+    })
 }

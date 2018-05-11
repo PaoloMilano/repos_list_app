@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 
         user_url_container.setOnClickListener {
             val i = Intent(Intent.ACTION_VIEW)
-            i.data = Uri.parse(userViewModel.gitHubUser.get().htmlUrl)
+            i.data = Uri.parse(userViewModel.gitHubUser.get()?.htmlUrl)
             startActivity(i)
         }
 

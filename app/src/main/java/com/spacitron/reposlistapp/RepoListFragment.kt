@@ -55,7 +55,7 @@ class RepoListFragment : Fragment() {
                 object : Observable.OnPropertyChangedCallback() {
                     override fun onPropertyChanged(p0: Observable?, p1: Int) {
                         val i = Intent(Intent.ACTION_VIEW)
-                        i.data = Uri.parse(observableRepositorySelection.get().htmlUrl)
+                        i.data = Uri.parse(observableRepositorySelection.get()?.htmlUrl)
                         activity?.startActivity(i)
                     }
                 })
@@ -87,7 +87,9 @@ class RepoListFragment : Fragment() {
                         val errorString = when (observableError.get()) {
                             RepositoryViewModel.DataError.FORBIDDEN -> getString(R.string.error_forbidden)
                             RepositoryViewModel.DataError.NETWORK_ERROR -> getString(R.string.error_network)
-                            RepositoryViewModel.DataError.OTHER -> getString(R.string.error_other)
+                            else -> {
+                                getString(R.string.error_other)
+                            }
                         }
 
                         Snackbar.make(repoListBinding.root, errorString, Snackbar.LENGTH_SHORT).show()
