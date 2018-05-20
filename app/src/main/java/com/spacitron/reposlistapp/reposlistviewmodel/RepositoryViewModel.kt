@@ -1,11 +1,10 @@
-package com.spacitron.reposlistapp.userrepos.repoviewmodel
+package com.spacitron.reposlistapp.reposlistviewmodel
 
 import android.arch.lifecycle.ViewModel
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import com.spacitron.reposlistapp.model.Repository
-import com.spacitron.reposlistapp.utils.ErrorListener
 import com.spacitron.reposlistapp.utils.ItemSelectedListener
 import com.spacitron.reposlistapp.utils.ItemShownListener
 import io.reactivex.disposables.CompositeDisposable
@@ -13,7 +12,7 @@ import io.reactivex.subjects.PublishSubject
 import retrofit2.HttpException
 import java.net.UnknownHostException
 
-open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedListener<Repository>, ErrorListener {
+open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedListener<Repository> {
 
     enum class DataError {
         NETWORK_ERROR, FORBIDDEN, OTHER
@@ -39,7 +38,7 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
 
     open fun refresh(repositoryProvider: CachedRepositoryManager) {
 
-        repositoryProvider.setErrorListener(this)
+        repositoryProvider.setErrorListener{onError(it)}
         this.repositoryProvider = repositoryProvider
 
 
@@ -75,7 +74,7 @@ open class RepositoryViewModel : ViewModel(), ItemShownListener, ItemSelectedLis
                 ?.subscribe(subscriptionFunction)
     }
 
-    override fun onError(throwable: Throwable) {
+    private fun onError(throwable: Throwable) {
         val errorOutput = when (throwable) {
             is UnknownHostException -> DataError.NETWORK_ERROR
             is HttpException -> if (throwable.code() == 403) {

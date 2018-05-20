@@ -9,7 +9,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.spacitron.reposlistapp.R
 import com.spacitron.reposlistapp.databinding.ActivityUserReposBinding
-import com.spacitron.reposlistapp.reposervice.serviceproviders.RetrofitGitHubServiceProvider
+import com.spacitron.reposlistapp.githubservice.GitHubServiceProvider
 import com.spacitron.reposlistapp.userrepos.userviewmodel.GitHubUserViewModel
 import kotlinx.android.synthetic.main.activity_user_repos.*
 
@@ -34,7 +34,7 @@ class UserReposActivity : AppCompatActivity() {
 
         val gitHubUserName = intent.getStringExtra(GITHUB_USER_NAME_KEY)
 
-        val retroFitProvider = RetrofitGitHubServiceProvider
+        val retroFitProvider = GitHubServiceProvider
         userViewModel.initialise(retroFitProvider, gitHubUserName)
 
         val binding: ActivityUserReposBinding = DataBindingUtil.setContentView(this, R.layout.activity_user_repos)
@@ -46,6 +46,6 @@ class UserReposActivity : AppCompatActivity() {
             startActivity(i)
         }
 
-        supportFragmentManager.beginTransaction().replace(list_container.id, RepoListFragment.getInstance(gitHubUserName)).commit()
+        supportFragmentManager.beginTransaction().replace(list_container.id, UserRepoListFragment.newInstance(gitHubUserName)).commit()
     }
 }

@@ -1,32 +1,29 @@
-package com.spacitron.reposlistapp
+package com.spacitron.reposlistapp.recentrepos
 
+import android.app.SearchManager
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import kotlinx.android.synthetic.main.activity_user_search.*
-import android.app.SearchManager
+import com.spacitron.reposlistapp.R
 import com.spacitron.reposlistapp.userrepos.UserReposActivity
+import kotlinx.android.synthetic.main.activity_user_search.*
 
 
-class UserSearchActivity : AppCompatActivity() {
+class RecentReposListActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_user_search)
-        setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
+        setContentView(R.layout.activity_user_search)
+        setSupportActionBar(recent_repos_list_toolbar)
+
+        supportFragmentManager.beginTransaction().replace(recent_repos_list_container.id, RecentRepoListFragment.newInstance()).commit()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.search_menu, menu)
+        menuInflater.inflate(R.menu.search_menu, menu)
         return true
     }
 
@@ -46,7 +43,6 @@ class UserSearchActivity : AppCompatActivity() {
             intent?.getStringExtra(SearchManager.QUERY).let {
                 startActivity(UserReposActivity.getParamIntent(this, it))
             }
-            //    private val GITHUB_USER_NAME = "JakeWharton"
         }
     }
 }

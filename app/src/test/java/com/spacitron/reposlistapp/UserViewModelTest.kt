@@ -2,8 +2,8 @@ package com.spacitron.reposlistapp
 
 import com.spacitron.reposlistapp.model.GitHubUser
 import com.spacitron.reposlistapp.model.Repository
-import com.spacitron.reposlistapp.reposervice.serviceproviders.GitHubServiceProvider
-import com.spacitron.reposlistapp.reposervice.services.GitHubService
+import com.spacitron.reposlistapp.githubservice.GitHubServiceProvider
+import com.spacitron.reposlistapp.githubservice.GitHubService
 import com.spacitron.reposlistapp.userrepos.userviewmodel.GitHubUserViewModel
 import io.reactivex.Single
 import junit.framework.Assert
@@ -19,9 +19,9 @@ class UserViewModelTest {
 
         val userViewModel = TestyGitHubUserViewModel()
 
-        userViewModel.getUserSingle(object : GitHubServiceProvider{
+        userViewModel.getUserSingle(object : GitHubServiceProvider {
             override fun getGitHubService(): GitHubService {
-                return object : GitHubService{
+                return object : GitHubService {
 
                     override fun getUser(user: String): Single<GitHubUser?> {
                         return Single.error(Exception())

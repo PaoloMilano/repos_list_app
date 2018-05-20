@@ -22,4 +22,7 @@ open class Repository: RealmModel{
     @SerializedName("html_url")
     var htmlUrl: String? = null
 
+    @SerializedName("pushed_at")
+    var pushedAt: String? = null
+
 }

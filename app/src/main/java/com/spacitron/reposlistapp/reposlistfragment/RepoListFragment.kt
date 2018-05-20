@@ -1,4 +1,4 @@
-package com.spacitron.reposlistapp.userrepos
+package com.spacitron.reposlistapp.reposlistfragment
 
 
 import android.arch.lifecycle.ViewModelProviders
@@ -16,27 +16,16 @@ import android.view.View
 import android.view.ViewGroup
 import com.spacitron.reposlistapp.R
 import com.spacitron.reposlistapp.databinding.FragmentRepoListBinding
-import com.spacitron.reposlistapp.reposervice.serviceproviders.RetrofitGitHubServiceProvider
-import com.spacitron.reposlistapp.userrepos.repoviewmodel.CachedRepositoryManager
-import com.spacitron.reposlistapp.userrepos.repoviewmodel.RepositoryViewModel
+import com.spacitron.reposlistapp.model.Repository
+import com.spacitron.reposlistapp.reposlistviewmodel.CachedRepositoryManager
+import com.spacitron.reposlistapp.reposlistviewmodel.RepositoryViewModel
+import com.spacitron.reposlistapp.userrepos.ReposRecyclerViewAdapter
+import io.reactivex.Single
 import kotlinx.android.synthetic.main.fragment_repo_list.view.*
 
-class RepoListFragment : Fragment() {
+abstract class RepoListFragment : Fragment() {
 
-
-    companion object {
-
-        private val GITHUB_LOGIN_KEY = "user_login_key"
-
-        fun getInstance(gitHubUserLogin: String): RepoListFragment {
-            val bundle = Bundle()
-            bundle.putString(GITHUB_LOGIN_KEY, gitHubUserLogin)
-
-            val repoListFragment = RepoListFragment()
-            repoListFragment.arguments = bundle
-            return repoListFragment
-        }
-    }
+    protected abstract fun fetchRepos(): (Int, Int) -> Single<List<Repository>?>
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -44,12 +33,7 @@ class RepoListFragment : Fragment() {
 
         val repositoryViewModel = ViewModelProviders.of(activity as FragmentActivity).get(RepositoryViewModel::class.java)
 
-
-        val gitHubUserLogin = arguments?.getString(GITHUB_LOGIN_KEY)
-        gitHubUserLogin?.let {
-            repositoryViewModel.initialise(CachedRepositoryManager(RetrofitGitHubServiceProvider, it))
-        }
-
+        repositoryViewModel.initialise(CachedRepositoryManager(fetchRepos()))
 
         val observableRepositorySelection = repositoryViewModel.itemSelected
         observableRepositorySelection.addOnPropertyChangedCallback(
@@ -68,16 +52,11 @@ class RepoListFragment : Fragment() {
         repoListBinding.onItemSelectedListener = repositoryViewModel
         repoListBinding.onItemShownListener = repositoryViewModel
 
-
-        val layoutManager = LinearLayoutManager(context)
-        repoListBinding.getRoot().recycler_view.layoutManager = layoutManager
+        repoListBinding.getRoot().recycler_view.layoutManager = LinearLayoutManager(context)
         repoListBinding.getRoot().recycler_view.adapter = ReposRecyclerViewAdapter()
 
-
         repoListBinding.getRoot().pull_to_refresh.setOnRefreshListener {
-            gitHubUserLogin?.let {
-                repositoryViewModel.refresh(CachedRepositoryManager(RetrofitGitHubServiceProvider, it))
-            }
+            repositoryViewModel.refresh(CachedRepositoryManager(fetchRepos()))
         }
 
         val observableError = repositoryViewModel.error

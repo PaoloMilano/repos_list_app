@@ -1,9 +1,6 @@
-package com.spacitron.reposlistapp.userrepos.repoviewmodel
+package com.spacitron.reposlistapp.reposlistviewmodel
 
 import com.spacitron.reposlistapp.model.Repository
-import com.spacitron.reposlistapp.reposervice.serviceproviders.GitHubServiceProvider
-import com.spacitron.reposlistapp.reposervice.services.GitHubService
-import com.spacitron.reposlistapp.utils.ErrorListener
 import com.vicpin.krealmextensions.deleteAll
 import com.vicpin.krealmextensions.querySorted
 import com.vicpin.krealmextensions.saveAll
@@ -11,18 +8,16 @@ import io.reactivex.Single
 import io.realm.Sort
 
 
-open class CachedRepositoryManager(gitHubServiceProvider: GitHubServiceProvider, private val gitHubUser: String, private val itemsPerPage: Int = 15) {
+open class CachedRepositoryManager(private val repoListFetcher: (page:Int, perPage:Int)-> Single<List<Repository>?>, private val itemsPerPage: Int = 15) {
 
     private var nextPage: Int
-    private val gitHubService: GitHubService
-    private var errorListener: ErrorListener? = null
+    private var errorListener: ((t: Throwable) -> Unit)? = null
 
     init {
         nextPage = 1
-        gitHubService = gitHubServiceProvider.getGitHubService()
     }
 
-    fun setErrorListener(errorListener: ErrorListener) {
+    fun setErrorListener(errorListener: (t: Throwable) -> Unit) {
         this.errorListener = errorListener
     }
 
@@ -34,17 +29,17 @@ open class CachedRepositoryManager(gitHubServiceProvider: GitHubServiceProvider,
             return Single.never()
         }
 
-        return gitHubService.getRepos(gitHubUser, nextPage, itemsPerPage)
+        return repoListFetcher(nextPage, itemsPerPage)
                 .doOnEvent { repos, _ ->
                     repos?.let {
                         saveReposToCache(it)
                     }
                 }
                 .onErrorReturn {
-                    errorListener?.onError(it)
+                    errorListener?.invoke(it)
                     getFromCache()
                 }
-                .doOnEvent{ repos, _ ->
+                .doOnEvent { repos, _ ->
                     nextPage = if (repos != null && repos?.size < itemsPerPage) {
                         -1
                     } else {
@@ -67,7 +62,7 @@ open class CachedRepositoryManager(gitHubServiceProvider: GitHubServiceProvider,
 
     protected open fun getFromCache(): List<Repository> {
 
-        if(!hasNext()){
+        if (!hasNext()) {
             return emptyList()
         }
 

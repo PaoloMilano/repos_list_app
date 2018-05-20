@@ -2,10 +2,10 @@ package com.spacitron.reposlistapp
 
 import com.spacitron.reposlistapp.model.GitHubUser
 import com.spacitron.reposlistapp.model.Repository
-import com.spacitron.reposlistapp.reposervice.serviceproviders.GitHubServiceProvider
-import com.spacitron.reposlistapp.reposervice.services.GitHubService
-import com.spacitron.reposlistapp.userrepos.repoviewmodel.CachedRepositoryManager
-import com.spacitron.reposlistapp.userrepos.repoviewmodel.RepositoryViewModel
+import com.spacitron.reposlistapp.githubservice.GitHubServiceProvider
+import com.spacitron.reposlistapp.githubservice.GitHubService
+import com.spacitron.reposlistapp.reposlistviewmodel.CachedRepositoryManager
+import com.spacitron.reposlistapp.reposlistviewmodel.RepositoryViewModel
 import io.reactivex.Single
 import junit.framework.Assert.assertEquals
 import org.junit.Test
