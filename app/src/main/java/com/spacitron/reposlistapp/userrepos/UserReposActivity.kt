@@ -18,7 +18,7 @@ class UserReposActivity : AppCompatActivity() {
     companion object {
         private val GITHUB_USER_NAME_KEY = "user_key"
 
-        fun getParamIntent(callingActivity: Activity, githubUserName: String): Intent{
+        fun getParamIntent(callingActivity: Activity, githubUserName: String): Intent {
             val intent = Intent(callingActivity, UserReposActivity::class.java)
             return intent.putExtra(GITHUB_USER_NAME_KEY, githubUserName);
         }
@@ -32,7 +32,11 @@ class UserReposActivity : AppCompatActivity() {
 
         val userViewModel = ViewModelProviders.of(this).get(GitHubUserViewModel::class.java)
 
-        val gitHubUserName = intent.getStringExtra(GITHUB_USER_NAME_KEY)
+        val gitHubUserName = if (intent.hasExtra(GITHUB_USER_NAME_KEY)) {
+            intent.getStringExtra(GITHUB_USER_NAME_KEY)
+        } else {
+            "JakeWharton"
+        }
 
         val retroFitProvider = GitHubServiceProvider
         userViewModel.initialise(retroFitProvider, gitHubUserName)

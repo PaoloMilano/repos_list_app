@@ -4,6 +4,7 @@ package com.spacitron.reposlistapp.userrepos
 import android.os.Bundle
 import com.spacitron.reposlistapp.githubservice.GitHubServiceProvider
 import com.spacitron.reposlistapp.reposlistfragment.RepoListFragment
+import io.reactivex.Single
 
 class UserRepoListFragment : RepoListFragment() {
 
@@ -21,5 +22,13 @@ class UserRepoListFragment : RepoListFragment() {
         }
     }
 
-    override fun fetchRepos() = {page: Int, perPage: Int ->  arguments?.getString(GITHUB_LOGIN_KEY).let { GitHubServiceProvider.getRepos("", page,perPage)} }
+    override fun fetchRepos() = { page: Int, perPage: Int ->
+        val arguments = arguments
+        if (arguments != null) {
+            arguments.getString(GITHUB_LOGIN_KEY).let { GitHubServiceProvider.getRepos(it, page, perPage) }
+        }else {
+           Single.never()
+        }
+    }
+
 }
