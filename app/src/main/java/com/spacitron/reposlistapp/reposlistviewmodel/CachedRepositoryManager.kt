@@ -40,7 +40,7 @@ open class CachedRepositoryManager(private val repoListFetcher: (page:Int, perPa
                     getFromCache()
                 }
                 .doOnEvent { repos, _ ->
-                    nextPage = if (repos != null && repos?.size < itemsPerPage) {
+                    nextPage = if (repos != null && repos.size < itemsPerPage) {
                         -1
                     } else {
                         nextPage + 1
@@ -56,7 +56,7 @@ open class CachedRepositoryManager(private val repoListFetcher: (page:Int, perPa
         if (nextPage == 1) {
             Repository().deleteAll()
         }
-        repos?.saveAll()
+        repos.saveAll()
     }
 
 

@@ -19,7 +19,7 @@ class BoundRecyclerView<T>(context:Context, attrs: AttributeSet, defStyle: Int) 
 
     get() {
         if (adapter is BoundPagedRecyclerViewAdapter<*, *>){
-            return adapter as BoundPagedRecyclerViewAdapter<T, *>?
+            return adapter as? BoundPagedRecyclerViewAdapter<T, *>?
         }
         return null
     }
