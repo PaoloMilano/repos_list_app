@@ -3,7 +3,7 @@ package com.spacitron.reposlistapp.userrepos
 
 import android.os.Bundle
 import com.spacitron.reposlistapp.githubservice.GitHubServiceProvider
-import com.spacitron.reposlistapp.reposlistfragment.RepoListFragment
+import com.spacitron.reposlistapp.abstractreposlistfragment.RepoListFragment
 import io.reactivex.Single
 
 class UserRepoListFragment : RepoListFragment() {

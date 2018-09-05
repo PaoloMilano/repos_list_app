@@ -22,15 +22,34 @@ object GitHubServiceProvider {
             .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
             .build()
 
+    private val webRetrofit = Retrofit.Builder()
+            .client(OkHttpClient().newBuilder().addInterceptor {
+                // Keep this here for easy debugging
+                it.proceed(it.request())
+            }.build())
+            .baseUrl("https://github.com")
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
+            .build()
+
+
+    // This is so we can return a different service for testing purposes
+    open fun getGitHubService(): GitHubService{
+        return retrofit.create(GitHubService::class.java)
+    }
+
     fun getRepos(user: String, page: Int, perPage: Int): Single<List<Repository>?> {
-        return retrofit.create(GitHubService::class.java).getRepos(user, page, perPage)
+        return getGitHubService().getRepos(user, page, perPage)
     }
 
     fun recentRepos(page: Int, perPage: Int): Single<RepositoryResponse?> {
-        return retrofit.create(GitHubService::class.java).recentRepos(page, perPage)
+        return getGitHubService().recentRepos(page, perPage)
     }
 
     fun getUser(user: String): Single<GitHubUser?> {
-        return retrofit.create(GitHubService::class.java).getUser(user)
+        return getGitHubService().getUser(user)
+    }
+
+    fun getTrendingRepos(): Single<List<Repository>?> {
+        return webRetrofit.create(GitHubWebService::class.java).getTrendingRepos().map { GitHubWebRepoDeserialiser.map(String(it.bytes()))}
     }
 }

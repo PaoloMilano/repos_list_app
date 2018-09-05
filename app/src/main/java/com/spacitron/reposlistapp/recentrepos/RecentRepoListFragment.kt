@@ -1,8 +1,8 @@
 package com.spacitron.reposlistapp.recentrepos
 
 
+import com.spacitron.reposlistapp.abstractreposlistfragment.RepoListFragment
 import com.spacitron.reposlistapp.githubservice.GitHubServiceProvider
-import com.spacitron.reposlistapp.reposlistfragment.RepoListFragment
 
 class RecentRepoListFragment : RepoListFragment() {
 
@@ -12,5 +12,6 @@ class RecentRepoListFragment : RepoListFragment() {
         }
     }
 
-    override fun fetchRepos() = { page: Int, perPage: Int -> GitHubServiceProvider.recentRepos(1, 1).map { it.items } }
+    override fun fetchRepos() = { page: Int, perPage: Int -> GitHubServiceProvider.getTrendingRepos() }
+//    override fun fetchRepos() = { page: Int, perPage: Int -> GitHubServiceProvider.recentRepos(1, 1).map { it.items } }
 }

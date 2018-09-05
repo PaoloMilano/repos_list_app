@@ -16,6 +16,10 @@
             android:label="@string/title_activity_repo_search"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
                 <intent-filter>
                     <action android:name="android.intent.action.SEARCH" />
                 </intent-filter>
@@ -24,10 +28,7 @@
                     android:resource="@xml/searchable"/>
         </activity>
     <activity android:name=".userrepos.UserReposActivity">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
+
     </activity>
 </application>
 

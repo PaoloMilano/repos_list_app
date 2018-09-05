@@ -1,4 +1,4 @@
-package com.spacitron.reposlistapp.reposlistfragment
+package com.spacitron.reposlistapp.abstractreposlistfragment
 
 
 import android.arch.lifecycle.ViewModelProviders
