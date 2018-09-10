@@ -39,7 +39,7 @@ class UserReposActivity : AppCompatActivity() {
         }
 
         val retroFitProvider = GitHubServiceProvider
-        userViewModel.initialise(retroFitProvider, gitHubUserName)
+        userViewModel.initialise(retroFitProvider::getUser, gitHubUserName)
 
         val binding: ActivityUserReposBinding = DataBindingUtil.setContentView(this, R.layout.activity_user_repos)
         binding.userViewModel = userViewModel

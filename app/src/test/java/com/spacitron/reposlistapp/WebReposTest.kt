@@ -8,6 +8,6 @@ class WebReposTest{
     @Test
     fun testReposParsing(){
         var trendingReposString = javaClass.getResourceAsStream("/trendingrepos").bufferedReader().use { it.readText() }
-        GitHubWebRepoDeserialiser().map(trendingReposString)
+        GitHubWebRepoDeserialiser.map(trendingReposString)
     }
 }

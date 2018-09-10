@@ -12,6 +12,6 @@ class RecentRepoListFragment : RepoListFragment() {
         }
     }
 
-    override fun fetchRepos() = { page: Int, perPage: Int -> GitHubServiceProvider.getTrendingRepos() }
-//    override fun fetchRepos() = { page: Int, perPage: Int -> GitHubServiceProvider.recentRepos(1, 1).map { it.items } }
+//    override fun fetchRepos() = { page: Int, perPage: Int -> GitHubServiceProvider.getTrendingRepos() }
+    override fun fetchRepos() = { page: Int, perPage: Int -> GitHubServiceProvider.recentRepos(1, 1).map { it.items } }
 }
